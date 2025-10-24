@@ -1,0 +1,882 @@
+/* .editor-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #f9fafb;
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.page-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+  padding: 12px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+  justify-content: flex-start;
+}
+
+.editor-button {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #1a202c;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.editor-button:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.editor-button.active {
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+  border-color: #3b82f6;
+}
+
+.editor-page {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  min-height: 500px;
+  padding: 20px;
+  border-radius: 8px;
+  line-height: 1.6;
+  font-size: 16px;
+  outline: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+
+
+
+/* 🎓 LEARNING: CSS Reset for Editor */
+/* Reset all spacing to ensure tight line spacing */
+.editor-page,
+.editor-page * {
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.editor-page {
+  padding: 60px 80px !important; /* Restore page padding */
+}
+
+/* ===============================
+   Editor Body: Sidebar + Canvas
+================================== */
+.editor-body {
+  display: flex;
+  gap: 24px;
+  padding: 32px 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ===============================
+   Sidebar
+================================== */
+.editor-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  height: fit-content;
+  position: sticky;
+  top: 120px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.page-controls-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.page-nav-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-nav-btn.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  font-weight: 600;
+}
+
+/* ===============================
+   Canvas Area (editor content)
+================================== */
+.editor-canvas {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 100%;
+  overflow: auto; 
+  padding: 20px 0;
+}
+
+/* ===============================
+   Editable Page
+================================== */
+.editor-page {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  max-width: 794px; /* Default A4 width */
+  min-height: 1123px; /* Default A4 height - but can grow */
+  padding: 60px 80px;
+  border-radius: 12px;
+  line-height: 1.2 !important; /* 🎓 LEARNING: Much tighter line spacing like Google Docs */
+  font-size: 16px;
+  outline: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  position: relative;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  transition: all 0.3s ease;
+  margin: 0 auto;
+  /* Remove fixed height - let content determine height */
+  /* height: ; */
+  height: 1123px; /* Fixed typo: removed space */
+  display: block !important; /* 🎓 LEARNING: Changed from flex to block for proper text flow */
+}
+
+/* Page size variations - use min-height instead of fixed height */
+.editor-page[data-page-size="a4"] {
+  max-width: 794px;
+  min-height: 1123px;
+}
+
+.editor-page[data-page-size="letter"] {
+  max-width: 816px;
+  min-height: 1056px;
+}
+
+.editor-page[data-page-size="legal"] {
+  max-width: 816px;
+  min-height: 1344px;
+}
+
+.editor-page[data-page-size="a3"] {
+  max-width: 1123px;
+  min-height: 1587px;
+}
+
+.editor-page[data-page-size="a5"] {
+  max-width: 560px;
+  min-height: 794px;
+}
+
+.editor-page[data-page-size="tabloid"] {
+  max-width: 1056px;
+  min-height: 1632px;
+}
+
+.editor-page:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .editor-body {
+    gap: 20px;
+    padding: 20px 0;
+  }
+  
+  .editor-sidebar {
+    width: 240px;
+    padding: 12px;
+  }
+  
+  .editor-page {
+    padding: 50px 60px;
+  }
+  
+  /* Adjust page sizes for smaller screens */
+  .editor-page[data-page-size="a3"],
+  .editor-page[data-page-size="tabloid"] {
+    max-width: 90vw;
+    min-height: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-body {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 0;
+  }
+  
+  .editor-sidebar {
+    width: 100%;
+    position: static;
+    order: 2;
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: hidden;
+  }
+  
+  .page-controls-vertical {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .page-nav-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  .editor-canvas {
+    order: 1;
+  }
+  
+  .editor-page {
+    padding: 40px 30px;
+    min-height: 800px;
+    max-width: 95vw;
+  }
+  
+  /* Mobile adjustments for all page sizes */
+  .editor-page[data-page-size] {
+    max-width: 95vw;
+    min-height: 800px;
+  }
+}
+
+/* ===============================
+   Floating Toolbar
+================================== */
+.floating-toolbar-container {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+  background: transparent;
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+  max-width: fit-content;
+  flex-wrap: wrap;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: #e2e8f0;
+  margin: 0 4px;
+}
+
+.editor-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.editor-button:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.editor-button.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  font-weight: 600;
+}
+
+.toolbar-select {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.toolbar-select:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.toolbar-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.font-family-select {
+  min-width: 140px;
+}
+
+.font-size-select {
+  min-width: 80px;
+}
+
+.page-size-select {
+  min-width: 160px;
+}
+
+.code-type-select {
+  min-width: 140px;
+}
+
+.color-picker-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.color-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: background 0.2s ease;
+}
+
+.color-label:hover {
+  background: #e2e8f0;
+}
+
+.color-input {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.color-input:hover {
+  border-color: #94a3b8;
+}
+
+.page-counter {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  user-select: none;
+  margin-left: 8px;
+}
+
+.page-counter-text {
+  white-space: nowrap;
+}
+
+/* ===============================
+   Code Block Styling
+================================== */
+.editor-page pre {
+  background-color: #1e1e1e;
+  border: 1px solid #3c3c3c;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre;
+  color: #d4d4d4;
+  word-wrap: break-word;
+  max-width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  tab-size: 2;
+}
+
+.editor-page pre code {
+  white-space: pre;
+  display: block;
+  width: 100%;
+}
+
+.editor-page pre::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #858585;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #2d2d2d;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.editor-page code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 14px;
+  background-color: #f1f3f4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #d73a49;
+  border: 1px solid #e1e4e8;
+}
+
+.editor-page pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+  border: none;
+}
+
+/* Syntax Highlighting */
+.editor-page .language-javascript .keyword { color: #569cd6; }
+.editor-page .language-javascript .string { color: #ce9178; }
+.editor-page .language-javascript .comment { color: #6a9955; }
+.editor-page .language-javascript .function { color: #dcdcaa; }
+.editor-page .language-javascript .number { color: #b5cea8; }
+.editor-page .language-javascript .operator { color: #d4d4d4; }
+
+.editor-page .language-python .keyword { color: #569cd6; }
+.editor-page .language-python .string { color: #ce9178; }
+.editor-page .language-python .comment { color: #6a9955; }
+.editor-page .language-python .function { color: #dcdcaa; }
+.editor-page .language-python .number { color: #b5cea8; }
+.editor-page .language-python .decorator { color: #c586c0; }
+
+.editor-page .language-html .tag { color: #569cd6; }
+.editor-page .language-html .attribute { color: #9cdcfe; }
+.editor-page .language-html .string { color: #ce9178; }
+.editor-page .language-html .comment { color: #6a9955; }
+
+.editor-page .language-css .selector { color: #d7ba7d; }
+.editor-page .language-css .property { color: #9cdcfe; }
+.editor-page .language-css .value { color: #ce9178; }
+.editor-page .language-css .comment { color: #6a9955; }
+.editor-page .language-css .function { color: #dcdcaa; }
+
+.editor-page .language-react .keyword { color: #569cd6; }
+.editor-page .language-react .string { color: #ce9178; }
+.editor-page .language-react .comment { color: #6a9955; }
+.editor-page .language-react .function { color: #dcdcaa; }
+.editor-page .language-react .jsx-tag { color: #569cd6; }
+.editor-page .language-react .jsx-attribute { color: #9cdcfe; }
+
+.editor-page .language-sql .keyword { color: #569cd6; }
+.editor-page .language-sql .string { color: #ce9178; }
+.editor-page .language-sql .comment { color: #6a9955; }
+.editor-page .language-sql .function { color: #dcdcaa; }
+.editor-page .language-sql .number { color: #b5cea8; }
+.editor-page .language-sql .operator { color: #d4d4d4; }
+
+/* Additional language support */
+.editor-page .language-bash .keyword { color: #569cd6; }
+.editor-page .language-bash .function { color: #dcdcaa; }
+.editor-page .language-bash .comment { color: #6a9955; }
+.editor-page .language-bash .string { color: #ce9178; }
+.editor-page .language-bash .number { color: #b5cea8; }
+.editor-page .language-bash .variable { color: #9cdcfe; }
+.editor-page .language-bash .operator { color: #d4d4d4; }
+
+.editor-page .language-shell .keyword { color: #569cd6; }
+.editor-page .language-shell .function { color: #dcdcaa; }
+.editor-page .language-shell .comment { color: #6a9955; }
+.editor-page .language-shell .string { color: #ce9178; }
+.editor-page .language-shell .number { color: #b5cea8; }
+.editor-page .language-shell .variable { color: #9cdcfe; }
+.editor-page .language-shell .operator { color: #d4d4d4; }
+
+.editor-page .language-markdown .heading { color: #569cd6; font-weight: bold; }
+.editor-page .language-markdown .bold { color: #dcdcaa; font-weight: bold; }
+.editor-page .language-markdown .italic { color: #dcdcaa; font-style: italic; }
+.editor-page .language-markdown .code { color: #ce9178; background: rgba(255, 255, 255, 0.1); padding: 1px 3px; border-radius: 2px; }
+.editor-page .language-markdown .link { color: #4ec9b0; }
+.editor-page .language-markdown .list { color: #d4d4d4; }
+.editor-page .language-markdown .quote { color: #6a9955; font-style: italic; }
+.editor-page .language-markdown .codeblock { color: #569cd6; }
+.editor-page .language-markdown .separator { color: #858585; }
+
+.editor-page .language-json .keyword { color: #569cd6; }
+.editor-page .language-json .string { color: #ce9178; }
+.editor-page .language-json .number { color: #b5cea8; }
+.editor-page .language-json .operator { color: #d4d4d4; }
+
+.editor-page .language-xml .tag { color: #569cd6; }
+.editor-page .language-xml .attribute { color: #9cdcfe; }
+.editor-page .language-xml .string { color: #ce9178; }
+.editor-page .language-xml .comment { color: #6a9955; }
+
+/* Code block hover effects */
+.editor-page pre:hover {
+  border-color: #4a4a4a;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Line numbers (optional enhancement) */
+.editor-page pre.with-line-numbers {
+  counter-reset: line;
+}
+
+.editor-page pre.with-line-numbers code {
+  position: relative;
+  padding-left: 3.5em;
+}
+
+.editor-page pre.with-line-numbers code::before {
+  content: counter(line);
+  counter-increment: line;
+  position: absolute;
+  left: -2.5em;
+  width: 2em;
+  text-align: right;
+  color: #858585;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ===============================
+   Image Upload Styles
+================================== */
+.editor-page img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 6px 0; /* Reduced margin */
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.editor-page img:hover {
+  transform: scale(1.02);
+}
+
+/* 🎓 LEARNING: Better Image Spacing */
+/* Ensure images don't create excessive spacing */
+.editor-page img + img {
+  margin-top: 4px; /* Reduced spacing between consecutive images */
+}
+
+.editor-page p + img,
+.editor-page div + img {
+  margin-top: 8px; /* Consistent spacing after text blocks */
+}
+
+.editor-page img + p,
+.editor-page img + div {
+  margin-top: 8px; /* Consistent spacing before text blocks */
+}
+
+/* 🎓 LEARNING: Google Docs-like Paragraph Spacing */
+/* Reduce spacing between paragraphs and elements */
+.editor-page p {
+  margin: 0 0 4px 0 !important; /* Much tighter spacing */
+  line-height: 1.2 !important;
+}
+
+.editor-page p:last-child {
+  margin-bottom: 0 !important; /* No margin on last paragraph */
+}
+
+.editor-page div {
+  margin: 0 0 4px 0 !important; /* Much tighter spacing */
+  line-height: 1.2 !important;
+}
+
+.editor-page h1,
+.editor-page h2,
+.editor-page h3,
+.editor-page h4,
+.editor-page h5,
+.editor-page h6 {
+  margin: 8px 0 4px 0 !important; /* Much tighter spacing */
+  line-height: 1.1 !important;
+}
+
+.editor-page ul,
+.editor-page ol {
+  margin: 4px 0 !important;
+  padding-left: 24px;
+}
+
+.editor-page li {
+  margin: 1px 0 !important;
+  line-height: 1.2 !important;
+}
+
+/* 🎓 LEARNING: Better Text Flow */
+/* Ensure proper spacing for different content types */
+.editor-page * {
+  line-height: 1.2 !important; /* Force tight line spacing on all elements */
+}
+
+.editor-page blockquote {
+  margin: 4px 0 !important;
+  padding: 8px 16px;
+  border-left: 4px solid #e2e8f0;
+  background: #f8fafc;
+  font-style: italic;
+  line-height: 1.2 !important;
+}
+
+.editor-page pre {
+  margin: 4px 0 !important;
+  line-height: 1.3 !important;
+}
+
+.editor-page table {
+  margin: 4px 0 !important;
+  border-collapse: collapse;
+}
+
+.editor-page td,
+.editor-page th {
+  padding: 4px 8px;
+  border: 1px solid #e2e8f0;
+  line-height: 1.2 !important;
+}
+
+.editor-page img:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Drag and drop visual feedback */
+.editor-page.drag-over {
+  background-color: #f0f9ff;
+  border-color: #3b82f6;
+  border-style: dashed;
+}
+
+/* Image upload button styles */
+.editor-button[title*="Image"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.editor-button[title*="Image"]:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Image resize handles (future enhancement) */
+.editor-page img.resizable {
+  position: relative;
+}
+
+.editor-page img.resizable::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  background: #3b82f6;
+  border-radius: 50%;
+  cursor: se-resize;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.editor-page img.resizable:hover::after {
+  opacity: 1;
+}
+
+/* ===============================
+   Resizable Image Styles
+================================== */
+.editor-page .resizable-image {
+  position: relative;
+  cursor: move;
+  user-select: none;
+  transition: transform 0.1s ease;
+}
+
+.editor-page .resizable-image.selected {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.editor-page .resizable-image:hover {
+  outline: 1px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+.editor-page .resizable-image.dragging {
+  opacity: 0.8;
+  transform: scale(1.02);
+  z-index: 1000;
+}
+
+/* Resize Handles */
+.resize-handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #3b82f6;
+  border: 1px solid white;
+  border-radius: 50%;
+  z-index: 1000;
+  pointer-events: all;
+}
+
+.resize-handle:hover {
+  background-color: #2563eb;
+  transform: scale(1.2);
+}
+
+.resize-handle-nw {
+  cursor: nw-resize;
+}
+
+.resize-handle-ne {
+  cursor: ne-resize;
+}
+
+.resize-handle-sw {
+  cursor: sw-resize;
+}
+
+.resize-handle-se {
+  cursor: se-resize;
+}
+
+/* Image Toolbar */
+.image-toolbar {
+  position: absolute;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  display: flex;
+  gap: 4px;
+  animation: fadeIn 0.2s ease;
+}
+
+.image-toolbar button {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.image-toolbar button:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,62 @@
+/* Invite Container */
+.invite-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f9fafb;
+    border: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+  
+  /* Input */
+  .invite-input {
+    padding: 6px 12px;
+    font-size: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    outline: none;
+    min-width: 220px;
+    transition: border-color 0.2s ease;
+  }
+  
+  .invite-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+  
+  /* Button */
+  .invite-button {
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .invite-button:hover:not(:disabled) {
+    background-color: #2563eb;
+  }
+  
+  .invite-button:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+  }
+  
+  /* Message */
+  .invite-message {
+    margin-left: 12px;
+    font-size: 13px;
+  }
+  
+  .invite-message.success {
+    color: #16a34a;
+  }
+  
+  .invite-message.error {
+    color: #dc2626;
+  }
+  

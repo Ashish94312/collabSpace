@@ -1,0 +1,33 @@
+/* body {
+  background-color: #f0f2f5;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.App {
+  text-align: adjust;
+  background-color: #ffffff;
+  padding: 40px 0;
+}
+
+.App h1 {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.App-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+} */
+
+
+.App-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
