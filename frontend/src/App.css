@@ -31,8 +31,3 @@
   align-items: center;
   justify-content: center;
 }
-
-body.dark-mode .App-header {
-  background-color: #2d2d2d;
-  color: #e4e4e4;
-}
