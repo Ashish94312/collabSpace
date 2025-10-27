@@ -33,7 +33,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
    - Click the "Fork" button on the GitHub repository page
    - Clone your fork locally:
    ```bash
-   git clone https://github.com/yourusername/collabspace.git
+   git clone https://github.com/YOUR_USERNAME/collabspace.git
    cd collabspace
    ```
 
@@ -79,8 +79,6 @@ When reporting bugs, please include:
 
 **Every bug report helps us build a better alternative to proprietary solutions!**
 
-Use the [Bug Report Template](.github/ISSUE_TEMPLATE/bug_report.md) when creating issues.
-
 ### ✨ Feature Requests
 
 For new features, please:
@@ -91,8 +89,6 @@ For new features, please:
 - **Consider implementation** complexity
 
 **Help us build the best collaborative editor that can compete with the big players!**
-
-Use the [Feature Request Template](.github/ISSUE_TEMPLATE/feature_request.md) when creating issues.
 
 ### 🔧 Code Contributions
 
