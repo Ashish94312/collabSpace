@@ -66,7 +66,6 @@
 - **React 19** - Modern React with hooks
 - **React Router** - Client-side routing
 - **Tailwind CSS** - Utility-first CSS framework
-- **TipTap** - Rich text editor framework
 - **KaTeX** - LaTeX rendering
 - **WebSocket** - Real-time communication
 
