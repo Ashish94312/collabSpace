@@ -107,8 +107,6 @@ export default function Dashboard() {
 
 
   const createDocument = async () => {
-    const title = prompt('Enter document title:');
-    if (!title) return;
     try {
       const res = await fetch('http://localhost:3000/api/documents', {
         method: 'POST',
@@ -116,7 +114,7 @@ export default function Dashboard() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify({ title }),
+        body: JSON.stringify({ title: 'Untitled Document' }),
       });
 
       const doc = await res.json();
