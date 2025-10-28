@@ -473,8 +473,7 @@ function useEditor(docId) {
     // getBoundingClientRect() gives us the exact position and size of an element
     const rect = img.getBoundingClientRect();
     const editorRect = editorRef.current.getBoundingClientRect();
-    
-    // Position toolbar above the image
+     // Position toolbar above the image
     toolbar.style.left = `${rect.left - editorRect.left}px`;
     toolbar.style.top = `${rect.top - editorRect.top - 50}px`;
 

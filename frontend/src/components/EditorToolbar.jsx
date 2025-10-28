@@ -275,15 +275,40 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             <option value="bash">💻 Bash</option>
           </select>
 
-          <button onMouseDown={(e) => { e.preventDefault(); 
-             const latex = prompt("Enter LaTeX code:", "\\frac{a}{b}");
-             if (latex) {
-              handleFormat('insertHTML', `<span class="latex">${latex}</span>`);
-             }
-            }}
-             title ="Insert LaTeX Code"
-             className="editor-button"
-             >  ∑ƒ(x)</button>
+          <button
+  onMouseDown={(e) => {
+    e.preventDefault();
+    const formula = prompt("Enter LaTeX formula (e.g., E = mc^2):");
+
+    if (formula) {
+      const editorDiv = document.querySelector('.editor-page'); // find the editable div
+      if (editorDiv) {
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const node = document.createTextNode(`\\(${formula}\\)`);
+        range.insertNode(node);
+
+        // move cursor to the end
+        range.setStartAfter(node);
+        range.setEndAfter(node);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        // ✅ Tell MathJax to re-render all LaTeX expressions in the editor
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise([editorDiv])
+            .then(() => console.log("MathJax re-rendered successfully"))
+            .catch((err) => console.error("MathJax render error:", err));
+        }
+      }
+    }
+  }}
+  title="Insert LaTeX Code"
+  className="editor-button"
+>
+  ∑ƒ(x)
+</button>
+
 
 
 
