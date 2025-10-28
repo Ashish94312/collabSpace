@@ -55,11 +55,10 @@ export default function Login() {
         <p>or</p>
         <button
           onClick={() => {
-            window.location.href = "http://localhost:3000/api/googleauth";
+            window.location.href = `${process.env.REACT_APP_API_URL}/api/googleauth`;
           }}
           className='google-sign-in-btn'
         >
-          {/* <FcGoogle size={22} /> */}
           <span>Sign in with Google</span>
         </button>
         <p className="login-footer">

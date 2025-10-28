@@ -217,7 +217,7 @@ passport.use(
 
 // ---------------- Google Auth Routes ----------------
 
-// Step 1 — Redirect user to Google OAuth consent
+// Step 1 — Redirect user to Google OAuth consent screen
 app.get("/api/googleauth", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 // Step 2 — Handle callback from Google

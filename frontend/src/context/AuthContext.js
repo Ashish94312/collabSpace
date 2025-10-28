@@ -107,10 +107,10 @@ export function AuthProvider({ children }) {
     localStorage.setItem("token", token);
     // Decode JWT to get id and email
     const decoded = JSON.parse(atob(token.split('.')[1]));
-    // console.log(token);
-    // console.log('decoded token', decoded);
+    console.log(token);
+    console.log('decoded token', decoded);
     setUser({ id: decoded.id, email: decoded.email });
-    // console.log('set user as ',{ id: decoded.id, email: decoded.email });
+    console.log('set user as ',{ id: decoded.id, email: decoded.email });
     setError(null); // Clear error on success
     setLoading(false);
     return true; // Indicate success

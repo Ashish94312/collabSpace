@@ -8,13 +8,11 @@ export default function AuthSuccess() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    // console.log('params', params);
+    console.log('params', params);
     const token = params.get("token");
     if (token) {
       googleSignIn(token);
       navigate("/dashboard");
-    }else{
-        navigate('/login');
     }
   }, []);
 
