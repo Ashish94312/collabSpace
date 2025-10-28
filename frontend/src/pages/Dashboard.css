@@ -224,6 +224,15 @@
   opacity: 0.7;
 }
 
+/* === Template Container === */
+
+.template-section-container {
+  padding: 1.5rem 0;
+  margin-bottom: 1.5rem;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
 /* === Responsive Design === */
 @media (max-width: 768px) {
   .dashboard-main {
