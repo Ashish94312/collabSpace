@@ -200,19 +200,20 @@ app.get('/api/validate-token', authenticate, async (req, res) => {
 });
 
 // Create a document
-app.post('/api/documents', authenticate, async (req, res) => {
-  const { title } = req.body;
+app.post('/api/documents', authMiddleware, async (req, res) => {
   try {
-    const doc = await prisma.document.create({
-      data: {
-        title,
-        type: 'document',
-        ownerId: req.user.id,
-        pages: { create: [{ pageIndex: 0, content: '<p>Start typing...</p>' }] },
-      },
+    const { title, content } = req.body; 
+
+    const newDoc = new Document({
+      title: title,
+      content: content || '', 
+      owner: req.userId,
     });
-    res.status(201).json(doc);
+
+    await newDoc.save();
+    res.status(201).json(newDoc); 
   } catch (err) {
+    console.error('Failed to create doc:', err); 
     res.status(500).json({ error: 'Failed to create document' });
   }
 });

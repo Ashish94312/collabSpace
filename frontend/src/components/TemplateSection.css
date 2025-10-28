@@ -1,0 +1,42 @@
+.template-section {
+  margin-top: 2rem;
+}
+
+.template-title {
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.template-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: #fff;
+}
+
+.template-card:hover {
+  border-color: #4A90E2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-3px);
+}
+
+.template-card h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #222;
+}
+
+.template-card p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0;
+}

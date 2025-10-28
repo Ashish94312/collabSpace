@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import TemplateSection from '../components/TemplateSection';
 import { useAuth } from '../context/AuthContext';
 import './Dashboard.css'; // Import custom CSS
 // import '../components/DocSearchBar';
@@ -128,6 +129,38 @@ export default function Dashboard() {
     }
   };
 
+  const createDocumentFromTemplate = async (content) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('You must be logged in to create a document');
+        return;
+      }
+
+      const res = await fetch('http://localhost:3000/api/documents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ 
+          title: 'Untitled Document', 
+          content: content  
+        }),
+      });
+
+      const doc = await res.json();
+      if (res.ok) {
+        navigate(`/editor/${doc.id}`);
+      } else {
+        alert(doc.error || 'Failed to create document');
+      }
+    } catch (err) {
+      console.error('Failed to create doc from template:', err);
+      alert('Network error while creating document');
+    }
+  };
+
   // Filter documents by search query (case-insensitive)
   const filteredDocuments = Array.isArray(documents) 
     ? documents.filter(doc =>
@@ -154,6 +187,10 @@ export default function Dashboard() {
       <main className="dashboard-main">
         <div className="dashboard-actions">
           <button className="create-button" onClick={createDocument}>+ New Document</button>
+        </div>
+
+        <div className="template-section-container">
+          <TemplateSection onSelectTemplate={createDocumentFromTemplate} />
         </div>
 
         {filteredDocuments.length > 0 ? (
