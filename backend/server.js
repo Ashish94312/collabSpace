@@ -15,7 +15,10 @@ const { PrismaClient } = require('@prisma/client');
 
 const { Client} = require('@elastic/elasticsearch');
 
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
+GOOGLE_CALLBACK_ROUTE=process.env.GOOGLE_REDIRECT_URI;
 
 // const fullContent = pages.map(p => p.content).join('\n\n');
 const esClient = new Client({
@@ -49,6 +52,9 @@ const wss = new WebSocket.Server({ port: 3001 });
 
 app.use(cors({ origin: 'http://localhost:3002' }));
 app.use(express.json());
+
+
+app.use(passport.initialize());
 
 
 
@@ -172,6 +178,67 @@ app.post('/api/login', async (req, res) => {
   const token = jwt.sign({ id: user.id, email: user.email }, SECRET, { expiresIn: '1h' });
   res.json({ token });
 });
+
+// ---------------- Google OAuth Setup ----------------
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: GOOGLE_CALLBACK_ROUTE,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const email = profile.emails[0].value;
+
+        let user = await prisma.user.findUnique({ where: { email } });
+
+        if (!user) {
+          // Generate a random strong password
+          const randomPassword = crypt.randomBytes(32).toString("hex");
+          const hashed = await bcrypt.hash(randomPassword, 10);
+
+          user = await prisma.user.create({
+            data: {
+              email,
+              password: hashed, // stored just to satisfy schema
+            },
+          });
+        }
+
+        done(null, user);
+      } catch (err) {
+        done(err, null);
+      }
+    }
+  )
+);
+
+// ---------------- Google Auth Routes ----------------
+
+// Step 1 — Redirect user to Google OAuth consent screen
+app.get("/api/googleauth", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+// Step 2 — Handle callback from Google
+// make sure this route matches the GOOGLE_REDIRECT_URI in env
+app.get(
+  '/api/googleauth/callback',
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const token = jwt.sign(
+      { id: req.user.id, email: req.user.email },
+      SECRET,
+      { expiresIn: "1h" }
+    );
+
+    console.log('token created for',{ id: req.user.id, email: req.user.email });
+
+    // Redirect to frontend with token
+    res.redirect(`${process.env.FRONTEND_URL}/auth-success?token=${token}`);
+  }
+);
+
 
 // Token refresh endpoint
 app.post('/api/refresh-token', authenticate, async (req, res) => {

@@ -4,6 +4,8 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import EditorPage from './pages/EditorPage';
+import AuthSuccess from './pages/AuthSuccess';
+
 
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
