@@ -801,30 +801,71 @@ function useEditor(docId) {
 
   // 🎓 LEARNING: Click Outside to Deselect
   // This function handles deselecting images when clicking elsewhere
+  // const handleEditorClick = (e) => {
+  //   // 🎓 LEARNING: Event Target Checking
+  //   // Check if the click was on an image, handle, or toolbar
+  //   if (!e.target.classList.contains('resizable-image') && 
+  //       !e.target.classList.contains('resize-handle') &&
+  //       !e.target.closest('.image-toolbar')) {
+      
+  //     // 🎓 LEARNING: Bulk DOM Operations
+  //     // Remove selection from all images
+  //     const allImages = editorRef.current.querySelectorAll('.resizable-image');
+  //     allImages.forEach(image => {
+  //       image.classList.remove('selected');
+  //     });
+      
+  //     // 🎓 LEARNING: Cleanup UI Elements
+  //     // Remove all resize handles
+  //     const handles = editorRef.current.querySelectorAll('.resize-handle');
+  //     handles.forEach(handle => handle.remove());
+      
+  //     // Remove toolbar
+  //     const toolbar = editorRef.current.querySelector('.image-toolbar');
+  //     if (toolbar) toolbar.remove();
+  //   }
+  // };
+
   const handleEditorClick = (e) => {
-    // 🎓 LEARNING: Event Target Checking
-    // Check if the click was on an image, handle, or toolbar
-    if (!e.target.classList.contains('resizable-image') && 
-        !e.target.classList.contains('resize-handle') &&
-        !e.target.closest('.image-toolbar')) {
-      
-      // 🎓 LEARNING: Bulk DOM Operations
-      // Remove selection from all images
-      const allImages = editorRef.current.querySelectorAll('.resizable-image');
-      allImages.forEach(image => {
-        image.classList.remove('selected');
-      });
-      
-      // 🎓 LEARNING: Cleanup UI Elements
-      // Remove all resize handles
-      const handles = editorRef.current.querySelectorAll('.resize-handle');
-      handles.forEach(handle => handle.remove());
-      
-      // Remove toolbar
-      const toolbar = editorRef.current.querySelector('.image-toolbar');
-      if (toolbar) toolbar.remove();
+   
+    let targetElement = e.target;
+    // Traverse up the DOM tree to find an anchor tag if the click wasn't directly on it
+    while (targetElement != null && targetElement.tagName !== 'A') {
+        targetElement = targetElement.parentElement;
     }
-  };
+
+    // If an anchor tag was found and it has an href
+    if (targetElement && targetElement.tagName === 'A' && targetElement.hasAttribute('href')) {
+        const href = targetElement.getAttribute('href');
+        // Basic check if it looks like a valid URL before opening
+        if (href && (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('/'))) {
+            e.preventDefault(); // Prevent potential editor interference
+            window.open(href, '_blank', 'noopener,noreferrer'); // Open link in a new tab safely
+            return; // Stop further processing (don't deselect images if clicking a link)
+        }
+    }
+    
+    // Existing logic for deselecting images, etc.
+    // Check if the click was *outside* an image, handle, or toolbar
+    if (!e.target.closest('.resizable-image') &&
+        !e.target.closest('.resize-handle') &&
+        !e.target.closest('.image-toolbar')) {
+
+        // Remove selection from all images
+        const allImages = editorRef.current?.querySelectorAll('.resizable-image');
+        allImages?.forEach(image => {
+            image.classList.remove('selected');
+        });
+
+        // Remove all resize handles
+        const handles = editorRef.current?.querySelectorAll('.resize-handle');
+        handles?.forEach(handle => handle.remove());
+
+        // Remove toolbar
+        const toolbar = editorRef.current?.querySelector('.image-toolbar');
+        if (toolbar) toolbar.remove();
+    }
+};
 
   const handleImageUpload = async (file) => {
     if (!file) return;
@@ -1234,19 +1275,94 @@ function useEditor(docId) {
     }
   }, [addPage]);
 
+  // useEffect(() => {
+  //   const handleKeyDown = (e) => {
+  //     const isMac = navigator.platform.toUpperCase().includes('MAC');
+  //     const isCtrl = isMac ? e.metaKey : e.ctrlKey;
+
+  //     if (isCtrl && e.key.toLowerCase() === 'z') {
+  //       e.preventDefault();
+  //       e.shiftKey ? redo() : undo();
+  //     }
+  //     if (isCtrl && e.key.toLowerCase() === 'k') {
+  //       e.preventDefault(); // Prevent doefault browser behavior 
+
+  //       const url = window.prompt('Enter URL: (include https://)');
+  //       if (url) { // If the user entered a URL and didn't cancel
+  //           const selection = window.getSelection();
+  //           // Check if the selection is actually within the editor
+  //           if (selection && editorRef.current?.contains(selection.anchorNode)) {
+                 
+  //               if (!selection.isCollapsed) {
+  //                   document.execCommand('createLink', false, url);
+  //               }
+                
+  //               else {
+  //                   // Use insertHTML which is generally more reliable for inserting new elements
+  //                   document.execCommand('insertHTML', false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+  //               }
+                 
+  //               if (editorRef.current) {
+  //                   handleInput({ target: editorRef.current });
+  //               }
+  //           }
+  //       }
+  //       return; 
+  //   }
+    
+  //   };
+  //   document.addEventListener('keydown', handleKeyDown);
+  //   return () => document.removeEventListener('keydown', handleKeyDown);
+  // }, [undo, redo, handleInput, editorRef]);
+
   useEffect(() => {
+    // eslint-disable-next-line
     const handleKeyDown = (e) => {
       const isMac = navigator.platform.toUpperCase().includes('MAC');
       const isCtrl = isMac ? e.metaKey : e.ctrlKey;
 
+      // --- CTRL + Z / CTRL + SHIFT + Z (Undo/Redo) ---
       if (isCtrl && e.key.toLowerCase() === 'z') {
         e.preventDefault();
         e.shiftKey ? redo() : undo();
+        // Do not return here, allow code to continue to Ctrl+K check
+      }
+
+      // --- CTRL + K (Link Insertion) ---
+      if (isCtrl && e.key.toLowerCase() === 'k') {
+        e.preventDefault(); // Prevent default browser behavior (e.g., opening search)
+
+        const url = window.prompt('Enter URL: (include https://)');
+        if (url) { 
+            const selection = window.getSelection();
+            // Check if the selection is actually within the editor
+            if (selection && editorRef.current?.contains(selection.anchorNode)) {
+                
+                // 1. If text is selected (not collapsed), use createLink
+                if (!selection.isCollapsed) {
+                    document.execCommand('createLink', false, url);
+                }
+                
+                // 2. If no text is selected, insert the URL as a link
+                else {
+                    document.execCommand('insertHTML', false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+                }
+                
+                // 3. Crucial: Manually trigger handleInput to save state and sync via WebSocket
+                if (editorRef.current) {
+                    handleInput({ target: editorRef.current });
+                }
+            }
+        }
+        return; // Indicate the shortcut was handled
       }
     };
+    
+    // 🎓 LEARNING: Global Event Listener Registration
+    // We attach the function to the entire document
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo]);
+}, [undo, redo, handleInput, editorRef]); // <-- FIXED DEPENDENCY ARRAY
 
   useEffect(() => {
     if (editorRef.current && pages[currentPageIndex]?.content !== editorRef.current.innerHTML) {
