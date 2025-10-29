@@ -337,3 +337,6 @@ Made with ❤️ by the open source community
 **Every contribution matters - help us build the future of collaborative editing!** 🌟
 
 </div>
+
+<p align="center">[⬆️ Back to top](#collabspace-)</p>
+
