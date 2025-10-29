@@ -1,253 +1,121 @@
-/* === Base Layout === */
-.dashboard-container {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f1f3f4;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* Dashboard.css */
+:root {
+  --bg-color: #f9f9f9;
+  --text-color: #222;
+  --card-bg: #fff;
+  --border-color: #ddd;
+  --button-bg: #007bff;
+  --button-text: #fff;
 }
 
-/* === Header === */
+body.dark-mode {
+  --bg-color: #1e1e1e;
+  --text-color: #eaeaea;
+  --card-bg: #2b2b2b;
+  --border-color: #444;
+  --button-bg: #4a90e2;
+  --button-text: #f9f9f9;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
 .dashboard-header {
-  background-color: #fff;
-  padding: 16px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--card-bg);
 }
 
-.dashboard-header h1 {
-  font-size: 20px;
-  color: #202124;
-  font-weight: 500;
-}
-
-.user-info {
+.user-controls {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1rem;
 }
 
-.user-info span {
-  font-size: 14px;
-  color: #5f6368;
-}
-
-.user-info button {
-  background-color: #d93025;
-  color: #fff;
-  padding: 6px 14px;
-  font-size: 13px;
-  border: none;
-  border-radius: 20px;
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 6px;
+  padding: 6px 10px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.3s;
+}
+.theme-toggle:hover {
+  background: var(--border-color);
 }
 
-.user-info button:hover {
-  background-color: #c5221f;
+.dashboard-sidebar {
+  padding: 16px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* === Main Content === */
 .dashboard-main {
-  padding: 32px;
   flex: 1;
+  padding: 20px;
 }
 
-/* === Dashboard Actions === */
-.dashboard-actions {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-/* === Create Button === */
 .create-button {
-  background-color: #1a73e8;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  font-size: 15px;
-  border-radius: 24px;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3);
-  transition: background 0.2s ease, box-shadow 0.2s ease;
-}
-
-.create-button:hover {
-  background-color: #185abc;
-  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.3);
-}
-
-
-
-/* === Search Bar === */
-.doc-search-bar {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.search-input {
-  width: 100%;
-  max-width: 320px;
+  background: var(--button-bg);
+  color: var(--button-text);
   padding: 10px 16px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 24px;
-  font-size: 15px;
-  background: #f8fafc;
-  color: #22223b;
-  outline: none;
-  transition: border 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.06);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.create-button:hover {
+  opacity: 0.85;
 }
 
-.search-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
-  background: #fff;
-}
-
-/* === Document Grid === */
 .doc-list {
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   list-style: none;
   padding: 0;
-  margin: 0;
-}
-
-/* === Document Card === */
-.doc-card {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.15);
-  transition: box-shadow 0.2s ease, transform 0.1s ease;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+  margin: 20px 0;
+  display: grid;
   gap: 12px;
-  position: relative;
 }
 
-.doc-icon {
-  font-size: 2rem;
-  flex-shrink: 0;
-}
-
-.doc-info {
-  flex: 1;
-  min-width: 0;
+.doc-card {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
 }
-
 .doc-card:hover {
-  box-shadow: 0 4px 10px rgba(60, 64, 67, 0.2);
-  transform: translateY(-1px) scale(1.03);
+  transform: scale(1.02);
+  background: var(--border-color);
 }
 
-.doc-card h3 {
+.doc-info h3 {
   margin: 0;
-  font-size: 16px;
-  color: #202124;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 1.1em;
 }
 
-.item-type {
-  font-size: 12px;
-  color: #6c757d;
-  background-color: #f8f9fa;
-  padding: 2px 8px;
-  border-radius: 12px;
-  align-self: flex-start;
-}
-
-/* === Delete Button === */
 .delete-button {
-  position: absolute;
-  top: 8px;
-  right: 8px;
   background: none;
   border: none;
-  font-size: 16px;
   cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
-  padding: 4px;
-  border-radius: 4px;
+  font-size: 1.1em;
 }
 
-.delete-button:hover {
-  opacity: 1;
-  background-color: #f8f9fa;
-}
-
-/* === Label / Status (optional) === */
-.open-label {
-  display: inline-block;
-  margin-top: 6px;
-  background-color: #34a853;
-  color: #fff;
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 12px;
-}
-
-/* === No Documents Message === */
 .no-docs {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 48px;
-  color: #5f6368;
-  gap: 12px;
-}
-
-.no-docs-illustration {
-  font-size: 4rem;
-  margin-bottom: 8px;
-  opacity: 0.7;
-}
-
-/* === Responsive Design === */
-@media (max-width: 768px) {
-  .dashboard-main {
-    padding: 16px;
-  }
-  
-  .doc-list {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .doc-card {
-    padding: 12px;
-  }
-  
-  .doc-icon {
-    font-size: 1.5rem;
-  }
-  
-  .doc-card h3 {
-    font-size: 14px;
-  }
-  
-  .item-type {
-    font-size: 11px;
-  }
+  text-align: center;
+  margin-top: 40px;
+  color: var(--text-color);
 }
