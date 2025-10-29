@@ -275,32 +275,35 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             <option value="bash">💻 Bash</option>
           </select>
 
-          <button
+         <button
   onMouseDown={(e) => {
     e.preventDefault();
     const formula = prompt("Enter LaTeX formula (e.g., E = mc^2):");
-
     if (formula) {
-      const editorDiv = document.querySelector('.editor-page'); // find the editable div
+      const editorDiv = document.querySelector('.editor-page'); // find editable div
       if (editorDiv) {
         const selection = window.getSelection();
         const range = selection.getRangeAt(0);
         const node = document.createTextNode(`\\(${formula}\\)`);
         range.insertNode(node);
 
-        // move cursor to the end
+        // move cursor to the end of inserted node
         range.setStartAfter(node);
         range.setEndAfter(node);
         selection.removeAllRanges();
         selection.addRange(range);
 
-        // ✅ Tell MathJax to re-render all LaTeX expressions in the editor
-        if (window.MathJax && window.MathJax.typesetPromise) {
-          window.MathJax.typesetPromise([editorDiv])
-            .then(() => console.log("MathJax re-rendered successfully"))
-            .catch((err) => console.error("MathJax render error:", err));
-        }
+        // ✅ re-rendering and refocus fix
+        editorDiv.focus();
+
+        // ✅ trigger input event manually to update React state
+        const event = new Event("input", { bubbles: true });
+        editorDiv.dispatchEvent(event);
       }
+    } else {
+      // if cancelled, make sure editor stays focused
+      const editorDiv = document.querySelector('.editor-page');
+      if (editorDiv) editorDiv.focus();
     }
   }}
   title="Insert LaTeX Code"
@@ -308,6 +311,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 >
   ∑ƒ(x)
 </button>
+
 
 
 
