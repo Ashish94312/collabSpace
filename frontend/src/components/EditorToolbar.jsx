@@ -275,34 +275,59 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             <option value="bash">💻 Bash</option>
           </select>
 
-         <button
+  <button
   onMouseDown={(e) => {
     e.preventDefault();
     const formula = prompt("Enter LaTeX formula (e.g., E = mc^2):");
+
     if (formula) {
-      const editorDiv = document.querySelector('.editor-page'); // find editable div
+      const editorDiv = document.querySelector(".editor-page");
       if (editorDiv) {
+        // Save current selection
         const selection = window.getSelection();
-        const range = selection.getRangeAt(0);
+        const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+
+        // Insert LaTeX text node
         const node = document.createTextNode(`\\(${formula}\\)`);
-        range.insertNode(node);
+        if (range) {
+          range.insertNode(node);
+          range.setStartAfter(node);
+          range.setEndAfter(node);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        } else {
+          editorDiv.appendChild(node);
+        }
 
-        // move cursor to the end of inserted node
-        range.setStartAfter(node);
-        range.setEndAfter(node);
-        selection.removeAllRanges();
-        selection.addRange(range);
-
-        // ✅ re-rendering and refocus fix
-        editorDiv.focus();
-
-        // ✅ trigger input event manually to update React state
+        // Trigger input event for React state update
         const event = new Event("input", { bubbles: true });
         editorDiv.dispatchEvent(event);
+
+        // ✅ Delay MathJax render slightly so DOM updates first
+        setTimeout(() => {
+          if (window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise([editorDiv])
+              .then(() => {
+                console.log("✅ MathJax rendered successfully");
+                // ✅ Re-focus after MathJax finishes rendering
+                editorDiv.focus();
+
+                // Place cursor at end (safe focus restore)
+                const range = document.createRange();
+                range.selectNodeContents(editorDiv);
+                range.collapse(false);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+              })
+              .catch((err) => console.error("❌ MathJax render error:", err));
+          } else {
+            console.error("⚠️ MathJax not loaded yet.");
+          }
+        }, 300);
       }
     } else {
-      // if cancelled, make sure editor stays focused
-      const editorDiv = document.querySelector('.editor-page');
+      const editorDiv = document.querySelector(".editor-page");
       if (editorDiv) editorDiv.focus();
     }
   }}
@@ -313,10 +338,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 </button>
 
 
-
-
-
-          <button
+    <button
             onMouseDown={(e) => { 
               e.preventDefault(); 
               if (convertToInlineCode) {
