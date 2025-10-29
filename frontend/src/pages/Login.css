@@ -131,4 +131,126 @@ html.dark .login-button:hover {
 html.dark .login-error {
   background-color: #451a1a;
   color: #fecaca;
+    min-height: 100vh;
+    background: linear-gradient(to right, #f8fafc, #e2e8f0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .login-card {
+    background: white;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .app-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2563eb;
+    margin-bottom: 0.5rem;
+  }
+  
+  .login-title {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .login-input {
+    padding: 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  
+  .login-button {
+    background-color: #2563eb;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .login-button:hover {
+    background-color: #1d4ed8;
+  }
+  
+  .login-button:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+  }
+  
+  .login-error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+  
+  .login-footer {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .signup-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .signup-link:hover {
+    text-decoration: underline;
+  }
+  
+  .google-sign-in-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  width: 100%;
+  padding: 10px 16px;
+
+  background-color: #fff;
+  color: #3c4043;
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  cursor: pointer;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.google-sign-in-btn:hover {
+  background-color: #f7f8f8;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3),
+    0 4px 8px rgba(60, 64, 67, 0.15);
+}
+
+.google-sign-in-btn:active {
+  background-color: #f1f3f4;
+  transform: scale(0.98);
+}
+
+.google-sign-in-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.3);
 }
