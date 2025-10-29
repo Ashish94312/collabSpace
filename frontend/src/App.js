@@ -7,11 +7,16 @@ import EditorPage from './pages/EditorPage';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import ThemeToggle from './components/ThemeToggle';
 
 function App() {
   return (
     <AuthProvider>
-      <Routes>
+
+     <div className="fixed top-4 right-4 z-50">
+            <ThemeToggle />
+     </div>
+     <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={

@@ -11,3 +11,44 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Define light theme variables on :root and dark overrides under .dark */
+:root {
+  --bg: #ffffff;
+  --panel: #f8fafc;
+  --muted: #6b7280;
+  --text: #0f172a;
+  --primary: #4f46e5;
+}
+
+/* When ".dark" is applied to <html> or <body>, override */
+.dark {
+  --bg: #0b1220;
+  --panel: #071127;
+  --muted: #94a3b8;
+  --text: #e6eef8;
+  --primary: #7c5cff;
+}
+
+/* Example utility classes using variables */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*make panels/cards automatically switch */
+.card {
+  background-color: var(--panel);
+  color: var(--text);
+}
+
+/* small helper for the theme toggle button */
+.theme-toggle {
+  @apply inline-flex items-center justify-center rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-offset-1;
+}

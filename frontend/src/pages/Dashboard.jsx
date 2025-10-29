@@ -11,14 +11,20 @@ export default function Dashboard() {
   const { user, logout, refreshToken } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [query, setQuery] = useState("");
+  const [darkMode, setDarkMode] = useState(
+      () => localStorage.getItem('theme') === 'dark');
   const navigate = useNavigate();
 
   const handleSearchResultClick = (docId, pageIndex) => {
     navigate(`/editor/${docId}`);
     setTimeout(() => {
-      switchPage(pageIndex); // ← from your useEditor hook
-    }, 300); // wait for editor to mount
+      switchPage(pageIndex);
+    }, 300);
   };
+  useEffect(() => {
+     document.body.classList.toggle('dark-mode', darkMode);
+     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+   }, [darkMode]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -135,79 +141,99 @@ export default function Dashboard() {
       )
     : [];
 
-  return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h1>📄 CollabSpace</h1>
-        <div className="user-info">
-          <span>{user?.email}</span>
-          <button onClick={logout}>Logout</button>
-        </div>
-      </header>
+ return (
+     <div className="dashboard-container">
+       <header className="dashboard-header">
+         <h1>📄 CollabSpace</h1>
+         <div className="user-controls">
+           <button
+             className="theme-toggle"
+             onClick={() => setDarkMode((prev) => !prev)}
+             title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+           >
+             {darkMode ? '🌙 Dark' : '☀️ Light'}
+           </button>
+           <div className="user-info">
+             <span>{user?.email}</span>
+             <button onClick={logout}>Logout</button>
+           </div>
+         </div>
+       </header>
 
-      <aside className="dashboard-sidebar">
-        <div className="search-container">
-          <DocumentSearchBar query={query} setQuery={setQuery} />
-        </div>
-      </aside>
+       <aside className="dashboard-sidebar">
+         <div className="search-container">
+           <DocumentSearchBar query={query} setQuery={setQuery} />
+         </div>
+       </aside>
 
-      <main className="dashboard-main">
-        <div className="dashboard-actions">
-          <button className="create-button" onClick={createDocument}>+ New Document</button>
-        </div>
+       <main className="dashboard-main">
+         <div className="dashboard-actions">
+           <button className="create-button" onClick={createDocument}>
+             + New Document
+           </button>
+         </div>
 
-        {filteredDocuments.length > 0 ? (
-          <ul className="doc-list">
-            {filteredDocuments.map(doc => (
-              <li key={doc.id} onClick={() => navigate(`/editor/${doc.id}`)}>
-                <div className="doc-card">
-                  <div className="doc-icon" aria-hidden="true">📄</div>
-                  <div className="doc-info">
-                    <h3>{doc.title}</h3>
-                    <span className="item-type">Document</span>
-                  </div>
-                  <button
-                    className="delete-button"
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      const confirmDelete = window.confirm(`Are you sure you want to delete "${doc.title}"?`);
-                      if (!confirmDelete) return;
-
-                      try {
-                        const res = await fetch(`http://localhost:3000/api/documents/${doc.id}`, {
-                          method: 'DELETE',
-                          headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                          },
-                        });
-
-                        if (!res.ok) {
-                          const data = await res.json();
-                          alert(data.error || 'Failed to delete document');
-                          return;
-                        }
-
-                        setDocuments(prevItems => prevItems.filter(i => i.id !== doc.id));
-                      } catch (err) {
-                        console.error('Delete error:', err);
-                        alert('Network error while deleting document');
-                      }
-                    }}
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="no-docs">
-            <div className="no-docs-illustration" aria-hidden="true">🗒️</div>
-            <p>No documents found.</p>
-            <button className="create-button" onClick={createDocument} style={{marginTop: '16px'}}>Create your first document</button>
-          </div>
-        )}
-      </main>
-    </div>
-  );
-}
+         {filteredDocuments.length > 0 ? (
+           <ul className="doc-list">
+             {filteredDocuments.map((doc) => (
+               <li key={doc.id} onClick={() => navigate(`/editor/${doc.id}`)}>
+                 <div className="doc-card">
+                   <div className="doc-icon" aria-hidden="true">
+                     📄
+                   </div>
+                   <div className="doc-info">
+                     <h3>{doc.title}</h3>
+                     <span className="item-type">Document</span>
+                   </div>
+                   <button
+                     className="delete-button"
+                     onClick={async (e) => {
+                       e.stopPropagation();
+                       if (!window.confirm(`Delete "${doc.title}"?`)) return;
+                       try {
+                         const res = await fetch(
+                           `http://localhost:3000/api/documents/${doc.id}`,
+                           {
+                             method: 'DELETE',
+                             headers: {
+                               Authorization: `Bearer ${localStorage.getItem('token')}`,
+                             },
+                           }
+                         );
+                         if (!res.ok) {
+                           const data = await res.json();
+                           alert(data.error || 'Failed to delete document');
+                           return;
+                         }
+                         setDocuments((prev) => prev.filter((d) => d.id !== doc.id));
+                       } catch (err) {
+                         console.error('Delete error:', err);
+                         alert('Network error while deleting document');
+                       }
+                     }}
+                   >
+                     🗑️
+                   </button>
+                 </div>
+               </li>
+             ))}
+           </ul>
+         ) : (
+           <div className="no-docs">
+             <div className="no-docs-illustration" aria-hidden="true">
+               🗒️
+             </div>
+             <p>No documents found.</p>
+             <button
+               className="create-button"
+               onClick={createDocument}
+               style={{ marginTop: '16px' }}
+             >
+               Create your first document
+             </button>
+           </div>
+         )}
+       </main>
+     </div>
+   );
+ }
