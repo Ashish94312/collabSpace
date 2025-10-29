@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import './Login.css'; // Add styles here
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Login() {
   const { login, error, loading, setError } = useAuth();
@@ -25,6 +25,9 @@ export default function Login() {
 
   return (
     <div className="login-container">
+      <div className="theme-toggle-container">
+        <ThemeToggle />
+      </div>
       <div className="login-card">
         <h1 className="app-title">CollabSpace</h1>
         <h2 className="login-title">Sign in to your account</h2>

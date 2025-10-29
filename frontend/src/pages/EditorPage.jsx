@@ -4,10 +4,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import useEditor, { EditorCanvas } from '../components/Editor';
 import EditorToolbar from '../components/EditorToolbar';
 import InviteUser from './Invite';
+import ThemeToggle from '../components/ThemeToggle';
 import { debounce } from 'lodash';
 import { getPageSize } from '../utils/pageSizes';
-
-import './EditorPage.css';
 
 export default function EditorPage() {
   const { docId } = useParams();
@@ -754,6 +753,7 @@ ORDER BY post_count DESC;`;
           />
         </div>
         <div className="editor-header-right">
+          <ThemeToggle />
           <InviteUser documentId={docId} />
         </div>
       </header>
