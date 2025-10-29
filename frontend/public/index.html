@@ -25,6 +25,21 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <!-- ✅ MathJax Configuration and Script -->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+    },
+    svg: { fontCache: 'global' },
+  };
+</script>
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+></script>
+
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -39,13 +54,6 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-      <script>
-  window.MathJax = {
-    tex: { inlineMath: [['\\(', '\\)']] },
-    svg: { fontCache: 'global' }
-  };
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-
+      
   </body>
 </html>

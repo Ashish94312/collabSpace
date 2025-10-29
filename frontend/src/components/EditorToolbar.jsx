@@ -276,66 +276,58 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
           </select>
 
   <button
-  onMouseDown={(e) => {
-    e.preventDefault();
-    const formula = prompt("Enter LaTeX formula (e.g., E = mc^2):");
-
-    if (formula) {
-      const editorDiv = document.querySelector(".editor-page");
-      if (editorDiv) {
-        // Save current selection
-        const selection = window.getSelection();
-        const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-
-        // Insert LaTeX text node
-        const node = document.createTextNode(`\\(${formula}\\)`);
-        if (range) {
-          range.insertNode(node);
-          range.setStartAfter(node);
-          range.setEndAfter(node);
-          selection.removeAllRanges();
-          selection.addRange(range);
-        } else {
-          editorDiv.appendChild(node);
-        }
-
-        // Trigger input event for React state update
-        const event = new Event("input", { bubbles: true });
-        editorDiv.dispatchEvent(event);
-
-        // ✅ Delay MathJax render slightly so DOM updates first
-        setTimeout(() => {
-          if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise([editorDiv])
-              .then(() => {
-                console.log("✅ MathJax rendered successfully");
-                // ✅ Re-focus after MathJax finishes rendering
-                editorDiv.focus();
-
-                // Place cursor at end (safe focus restore)
-                const range = document.createRange();
-                range.selectNodeContents(editorDiv);
-                range.collapse(false);
-                const selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
-              })
-              .catch((err) => console.error("❌ MathJax render error:", err));
-          } else {
-            console.error("⚠️ MathJax not loaded yet.");
-          }
-        }, 300);
+onMouseDown={(e) => {
+  e.preventDefault();
+  const formula = prompt("Enter LaTeX formula (e.g., E = mc^2):");
+  if (formula) {
+    const editorDiv = document.querySelector(".editor-page");
+    if (editorDiv) {
+      editorDiv.focus();
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        const range = document.createRange();
+        range.selectNodeContents(editorDiv);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
       }
-    } else {
-      const editorDiv = document.querySelector(".editor-page");
-      if (editorDiv) editorDiv.focus();
+      const range = selection.getRangeAt(0);
+
+      const marker = document.createElement("span");
+      marker.className = "formula-marker";
+      marker.textContent = `\\(${formula}\\)`;
+
+      range.insertNode(marker);
+      range.setStartAfter(marker);
+      range.setEndAfter(marker);
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      const event = new Event("input", { bubbles: true });
+      editorDiv.dispatchEvent(event);
+
+      setTimeout(() => {
+        if (window.MathJax) {
+          // Try typeset instead of typesetPromise
+          window.MathJax.typeset();
+          // Or fallback:
+          // window.MathJax.typesetPromise([editorDiv]).catch(console.error);
+        }
+      }, 300);
     }
-  }}
+  } else {
+    const editorDiv = document.querySelector(".editor-page");
+    if (editorDiv) editorDiv.focus();
+  }
+}}
+
+
   title="Insert LaTeX Code"
   className="editor-button"
 >
   ∑ƒ(x)
 </button>
+
 
 
     <button
