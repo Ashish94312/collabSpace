@@ -11,25 +11,23 @@
 /* === Header === */
 .dashboard-header {
   background-color: var(--bg-secondary, #ffffff);
-  padding: 20px 40px;
+  padding: 16px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 8px var(--shadow-light, rgba(0, 0, 0, 0.06));
+  box-shadow: 0 1px 4px var(--shadow-light, rgba(0, 0, 0, 0.06));
   position: sticky;
   top: 0;
   z-index: 10;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  transition: background-color 0.3s ease;
 }
 
 .dashboard-header h1 {
-  font-size: 24px;
+  font-size: 20px;
   color: var(--text-primary, #202124);
-  font-weight: 600;
+  font-weight: 500;
   transition: color 0.3s ease;
   margin: 0;
-  letter-spacing: -0.5px;
 }
 
 
@@ -46,61 +44,35 @@
 .user-info {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .user-info span {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-secondary, #5f6368);
   transition: color 0.3s ease;
-  font-weight: 500;
 }
 
 .user-info button {
   background-color: var(--accent-danger, #d93025);
   color: #fff;
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 6px 14px;
+  font-size: 13px;
   border: none;
-  border-radius: 8px;
+  border-radius: 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
+  transition: background 0.2s ease;
 }
 
 .user-info button:hover {
   background-color: var(--accent-danger-hover, #c5221f);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--shadow-medium, rgba(0, 0, 0, 0.15));
-}
-
-/* === Sidebar === */
-.dashboard-sidebar {
-  position: fixed;
-  top: 80px;
-  left: 20px;
-  width: 300px;
-  background: var(--bg-secondary, #ffffff);
-  border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px var(--shadow-light, rgba(60, 64, 67, 0.06));
-  z-index: 5;
-  transition: all 0.3s ease;
-}
-
-.search-container {
-  margin-bottom: 16px;
 }
 
 /* === Main Content === */
 .dashboard-main {
-  padding: 40px;
+  padding: 32px;
   flex: 1;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  margin-left: 340px;
+  transition: all 0.3s ease;
 }
 
 /* === Dashboard Actions === */
@@ -115,20 +87,18 @@
 .create-button {
   background-color: var(--accent-primary, #1a73e8);
   color: #fff;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
   font-size: 15px;
-  border-radius: 8px;
+  border-radius: 24px;
   cursor: pointer;
-  box-shadow: 0 2px 8px var(--shadow-medium, rgba(60, 64, 67, 0.15));
-  transition: all 0.2s ease;
-  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .create-button:hover {
   background-color: var(--accent-primary-hover, #185abc);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px var(--shadow-heavy, rgba(60, 64, 67, 0.3));
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.3);
 }
 
 
@@ -152,7 +122,7 @@
   background: var(--bg-tertiary, #f8fafc);
   color: var(--text-primary, #202124);
   outline: none;
-  transition: all 0.3s ease;
+  transition: border 0.2s, box-shadow 0.2s;
   box-shadow: 0 1px 3px var(--shadow-light, rgba(60, 64, 67, 0.06));
 }
 
@@ -178,13 +148,12 @@
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 1px 3px var(--shadow-light, rgba(60, 64, 67, 0.15));
-  transition: all 0.3s ease;
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 12px;
   position: relative;
-  border: 1px solid var(--border-color, transparent);
 }
 
 .doc-icon {
@@ -244,7 +213,6 @@
 .delete-button:hover {
   opacity: 1;
   background-color: var(--bg-tertiary, #f8fafc);
-  color: var(--accent-danger, #d93025);
 }
 
 /* === Label / Status (optional) === */
@@ -278,15 +246,8 @@
 
 /* === Responsive Design === */
 @media (max-width: 768px) {
-  .dashboard-sidebar {
-    position: static;
-    width: 100%;
-    margin-bottom: 20px;
-  }
-  
   .dashboard-main {
     padding: 16px;
-    margin-left: 0;
   }
   
   .doc-list {
