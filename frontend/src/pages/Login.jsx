@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 
 export default function Login() {
-  const { login, error, loading, setError } = useAuth();
+  const { login, error, loading, setError, googleSignIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -55,7 +55,15 @@ export default function Login() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-
+        <p>or</p>
+        <button
+          onClick={() => {
+            window.location.href = `${process.env.REACT_APP_API_URL}/api/googleauth`;
+          }}
+          className='google-sign-in-btn'
+        >
+          <span>Sign in with Google</span>
+        </button>
         <p className="login-footer">
           Don’t have an account?{' '}
           <Link to="/signup" className="signup-link">
