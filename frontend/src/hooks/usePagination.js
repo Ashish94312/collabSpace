@@ -1,132 +1,63 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
-export const usePagination = (totalPages, initialPage = 0) => {
-  const [currentPage, setCurrentPage] = useState(initialPage);
-  const [pageHistory, setPageHistory] = useState([initialPage]);
-  const [bookmarks, setBookmarks] = useState(new Set());
-  const [pageStats, setPageStats] = useState({});
-  const lastPageRef = useRef(initialPage);
+/**
+ * A React hook for paginating content based on its measured height.
+ * It uses a ResizeObserver to detect changes in the content element's size
+ * and calculates the number of pages and scroll offsets needed to display it
+ * across fixed-height pages.
+ *
+ * @param {React.RefObject<HTMLElement>} contentRef A ref to the content element whose height needs to be observed.
+ * @param {number} pageHeight The fixed height of a single page in pixels.
+ * @returns {{numPages: number, pageScrollOffsets: number[]}} Pagination state including total pages and offsets.
+ */
+export const usePagination = (contentRef, pageHeight) => {
+  const [numPages, setNumPages] = useState(1);
 
-  // Track page visits for analytics
   useEffect(() => {
-    if (currentPage !== lastPageRef.current) {
-      setPageStats(prev => ({
-        ...prev,
-        [currentPage]: (prev[currentPage] || 0) + 1
-      }));
-      lastPageRef.current = currentPage;
+    const contentElement = contentRef.current;
+
+    // Ensure we have a valid element and page height to proceed
+    if (!contentElement || pageHeight <= 0) {
+      setNumPages(1);
+      return;
     }
-  }, [currentPage]);
 
-  // Navigate to page with history tracking
-  const goToPage = useCallback((pageIndex) => {
-    if (pageIndex >= 0 && pageIndex < totalPages && pageIndex !== currentPage) {
-      setPageHistory(prev => [...prev, pageIndex]);
-      setCurrentPage(pageIndex);
-    }
-  }, [currentPage, totalPages]);
+    const updatePagination = () => {
+      // scrollHeight accurately reflects the total height of the content,
+      // including content that is not visible due to overflow.
+      const totalContentHeight = contentElement.scrollHeight;
+      // Calculate the number of pages, ensuring a minimum of 1 page.
+      const newNumPages = Math.max(1, Math.ceil(totalContentHeight / pageHeight));
 
-  // Navigate to previous page in history
-  const goBack = useCallback(() => {
-    if (pageHistory.length > 1) {
-      const newHistory = [...pageHistory];
-      newHistory.pop(); // Remove current page
-      const previousPage = newHistory[newHistory.length - 1];
-      setPageHistory(newHistory);
-      setCurrentPage(previousPage);
-    }
-  }, [pageHistory]);
-
-  // Navigate to next page in history
-  const goForward = useCallback(() => {
-    // This would require tracking forward history
-    // For now, just go to next page
-    if (currentPage < totalPages - 1) {
-      goToPage(currentPage + 1);
-    }
-  }, [currentPage, totalPages, goToPage]);
-
-  // Toggle bookmark for current page
-  const toggleBookmark = useCallback(() => {
-    setBookmarks(prev => {
-      const newBookmarks = new Set(prev);
-      if (newBookmarks.has(currentPage)) {
-        newBookmarks.delete(currentPage);
-      } else {
-        newBookmarks.add(currentPage);
-      }
-      return newBookmarks;
-    });
-  }, [currentPage]);
-
-  // Jump to next/previous bookmarked page
-  const goToNextBookmark = useCallback(() => {
-    const bookmarkedPages = Array.from(bookmarks).sort((a, b) => a - b);
-    const nextBookmark = bookmarkedPages.find(page => page > currentPage);
-    if (nextBookmark !== undefined) {
-      goToPage(nextBookmark);
-    }
-  }, [bookmarks, currentPage, goToPage]);
-
-  const goToPreviousBookmark = useCallback(() => {
-    const bookmarkedPages = Array.from(bookmarks).sort((a, b) => a - b);
-    const prevBookmark = bookmarkedPages.reverse().find(page => page < currentPage);
-    if (prevBookmark !== undefined) {
-      goToPage(prevBookmark);
-    }
-  }, [bookmarks, currentPage, goToPage]);
-
-  // Get page statistics
-  const getPageStats = useCallback(() => {
-    const mostVisited = Object.entries(pageStats)
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 3)
-      .map(([page]) => parseInt(page));
-
-    return {
-      totalVisits: Object.values(pageStats).reduce((sum, visits) => sum + visits, 0),
-      mostVisited,
-      bookmarkedPages: Array.from(bookmarks).sort((a, b) => a - b),
-      canGoBack: pageHistory.length > 1,
-      canGoForward: false, // Would need forward history tracking
+      // Update state. React will bail out of rendering if the new value is the same,
+      // so an explicit check isn't necessary.
+      setNumPages(newNumPages);
     };
-  }, [pageStats, bookmarks, pageHistory]);
 
-  // Smart pagination - show relevant pages based on usage
-  const getSmartPageNumbers = useCallback(() => {
-    const stats = getPageStats();
-    const smartPages = new Set();
+    // Initial calculation when the component mounts or dependencies change
+    updatePagination();
 
-    // Always include current page and adjacent pages
-    smartPages.add(currentPage);
-    if (currentPage > 0) smartPages.add(currentPage - 1);
-    if (currentPage < totalPages - 1) smartPages.add(currentPage + 1);
+    // Set up a ResizeObserver to listen for changes in the content element's dimensions.
+    // This is crucial for dynamically updating pagination as content is added/removed.
+    const observer = new ResizeObserver(updatePagination);
 
-    // Include most visited pages
-    stats.mostVisited.forEach(page => smartPages.add(page));
+    observer.observe(contentElement);
 
-    // Include bookmarked pages
-    stats.bookmarkedPages.forEach(page => smartPages.add(page));
+    // Cleanup function: disconnect the observer when the component unmounts or
+    // dependencies change, preventing memory leaks.
+    return () => {
+      observer.disconnect();
+    };
+  }, [contentRef, pageHeight]); // Re-run effect if contentRef or pageHeight changes
 
-    // Include first and last page
-    smartPages.add(0);
-    smartPages.add(totalPages - 1);
-
-    return Array.from(smartPages).sort((a, b) => a - b);
-  }, [currentPage, totalPages, getPageStats]);
+  // Calculate the scroll offsets for each page.
+  // This is memoized to avoid recalculating the array unless numPages or pageHeight changes.
+  const pageScrollOffsets = useMemo(() => {
+    return Array.from({ length: numPages }, (_, i) => i * pageHeight);
+  }, [numPages, pageHeight]);
 
   return {
-    currentPage,
-    goToPage,
-    goBack,
-    goForward,
-    toggleBookmark,
-    goToNextBookmark,
-    goToPreviousBookmark,
-    getPageStats,
-    getSmartPageNumbers,
-    isBookmarked: bookmarks.has(currentPage),
-    canGoBack: pageHistory.length > 1,
-    hasBookmarks: bookmarks.size > 0,
+    numPages,
+    pageScrollOffsets,
   };
-}; 
+};
