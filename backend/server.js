@@ -407,11 +407,36 @@ app.post('/api/documents/:docId/pages', authenticate, async (req, res) => {
 app.delete('/api/documents/:docId/pages/:pageIndex', authenticate, async (req, res) => {
   const { docId, pageIndex } = req.params;
   try {
-    await prisma.page.delete({
-      where: { documentId_pageIndex: { documentId: docId, pageIndex: parseInt(pageIndex) } },
-    });
+    const index = parseInt(pageIndex, 10);
+    if (Number.isNaN(index)) {
+      return res.status(400).json({ error: 'Invalid page index' });
+    }
 
-    res.json({ message: 'Page deleted' });
+    try {
+      const del = await prisma.$transaction(async (tx) => {
+        const result = await tx.page.deleteMany({
+          where: { documentId: docId, pageIndex: index },
+        });
+
+        if (result.count === 0) {
+          throw new Error('PAGE_NOT_FOUND');
+        }
+
+        await tx.page.updateMany({
+          where: { documentId: docId, pageIndex: { gt: index } },
+          data: { pageIndex: { decrement: 1 } },
+        });
+
+        return result;
+      });
+
+      return res.json({ message: 'Page deleted', deletedCount: del.count });
+    } catch (e) {
+      if (e && e.message === 'PAGE_NOT_FOUND') {
+        return res.status(404).json({ error: 'Page not found' });
+      }
+      throw e;
+    }
   } catch (err) {
     console.error('Error deleting page:', err);
     res.status(500).json({ error: 'Failed to delete page' });

@@ -8,6 +8,8 @@ import ThemeToggle from '../components/ThemeToggle';
 import { debounce } from 'lodash';
 import { getPageSize } from '../utils/pageSizes';
 
+import './EditorPage.css';
+
 export default function EditorPage() {
   const { docId } = useParams();
   const [title, setTitle] = useState('');

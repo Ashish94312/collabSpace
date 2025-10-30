@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import './Signup.css';
 import ThemeToggle from '../components/ThemeToggle';
 
 export default function Signup() {

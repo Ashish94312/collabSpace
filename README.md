@@ -1,4 +1,4 @@
-# CollabSpace 📄
+# <img src="frontend/public/favicon.ico" alt="" width="28" height="28" /> CollabSpace
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
@@ -337,3 +337,6 @@ Made with ❤️ by the open source community
 **Every contribution matters - help us build the future of collaborative editing!** 🌟
 
 </div>
+
+<p align="center">[⬆️ Back to top](#collabspace-)</p>
+

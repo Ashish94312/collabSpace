@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import './Dashboard.css';
 import DocumentSearchBar from '../components/DocSearchBar'; 
 import { switchPage } from '../components/Editor';
 import { isTokenExpired, getTimeUntilExpiration } from '../utils/tokenUtils';
@@ -137,7 +138,8 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>📄 CollabSpace</h1>
+        <h1 className="brand"> <span className="doc-icon" aria-hidden="true">
+          <img src="/favicon.ico" alt="CollabSpace" width="28" height="28" decoding="async" /></span> CollabSpace</h1>
         <div className="user-info">
           <ThemeToggle />
           <span>{user?.email}</span>
@@ -161,7 +163,7 @@ export default function Dashboard() {
             {filteredDocuments.map(doc => (
               <li key={doc.id} onClick={() => navigate(`/editor/${doc.id}`)}>
                 <div className="doc-card">
-                  <div className="doc-icon" aria-hidden="true">📄</div>
+                  <div className="doc-icon" aria-hidden="true">📄</div>    
                   <div className="doc-info">
                     <h3>{doc.title}</h3>
                     <span className="item-type">Document</span>

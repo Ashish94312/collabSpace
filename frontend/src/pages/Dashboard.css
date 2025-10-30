@@ -1,0 +1,312 @@
+/* === Base Layout === */
+.dashboard-container {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg-primary, #f1f3f4);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease;
+}
+
+/* === Header === */
+.dashboard-header {
+  background-color: var(--bg-secondary, #ffffff);
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px var(--shadow-light, rgba(0, 0, 0, 0.06));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  color: var(--text-primary, #202124);
+  font-weight: 600;
+  transition: color 0.3s ease;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+
+.dashboard-header .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.dashboard-header .brand img {
+  display: block;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-info span {
+  font-size: 15px;
+  color: var(--text-secondary, #5f6368);
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.user-info button {
+  background-color: var(--accent-danger, #d93025);
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.user-info button:hover {
+  background-color: var(--accent-danger-hover, #c5221f);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--shadow-medium, rgba(0, 0, 0, 0.15));
+}
+
+/* === Sidebar === */
+.dashboard-sidebar {
+  position: fixed;
+  top: 80px;
+  left: 20px;
+  width: 300px;
+  background: var(--bg-secondary, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px var(--shadow-light, rgba(60, 64, 67, 0.06));
+  z-index: 5;
+  transition: all 0.3s ease;
+}
+
+.search-container {
+  margin-bottom: 16px;
+}
+
+/* === Main Content === */
+.dashboard-main {
+  padding: 40px;
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  margin-left: 340px;
+}
+
+/* === Dashboard Actions === */
+.dashboard-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+/* === Create Button === */
+.create-button {
+  background-color: var(--accent-primary, #1a73e8);
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow-medium, rgba(60, 64, 67, 0.15));
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.create-button:hover {
+  background-color: var(--accent-primary-hover, #185abc);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px var(--shadow-heavy, rgba(60, 64, 67, 0.3));
+}
+
+
+
+/* === Search Bar === */
+.doc-search-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 320px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 24px;
+  font-size: 15px;
+  background: var(--bg-tertiary, #f8fafc);
+  color: var(--text-primary, #202124);
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px var(--shadow-light, rgba(60, 64, 67, 0.06));
+}
+
+.search-input:focus {
+  border-color: var(--accent-primary, #1a73e8);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
+  background: var(--bg-secondary, #ffffff);
+}
+
+/* === Document Grid === */
+.doc-list {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* === Document Card === */
+.doc-card {
+  background-color: var(--bg-secondary, #ffffff);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px var(--shadow-light, rgba(60, 64, 67, 0.15));
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  border: 1px solid var(--border-color, transparent);
+}
+
+.doc-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.doc-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.doc-card:hover {
+  box-shadow: 0 4px 10px var(--shadow-medium, rgba(60, 64, 67, 0.2));
+  transform: translateY(-1px) scale(1.03);
+}
+
+.doc-card h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-primary, #202124);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+.item-type {
+  font-size: 12px;
+  color: var(--text-secondary, #5f6368);
+  background-color: var(--bg-tertiary, #f8fafc);
+  padding: 2px 8px;
+  border-radius: 12px;
+  align-self: flex-start;
+  transition: all 0.3s ease;
+}
+
+/* === Delete Button === */
+.delete-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.delete-button:hover {
+  opacity: 1;
+  background-color: var(--bg-tertiary, #f8fafc);
+  color: var(--accent-danger, #d93025);
+}
+
+/* === Label / Status (optional) === */
+.open-label {
+  display: inline-block;
+  margin-top: 6px;
+  background-color: #34a853;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* === No Documents Message === */
+.no-docs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 48px;
+  color: var(--text-secondary, #5f6368);
+  gap: 12px;
+  transition: color 0.3s ease;
+}
+
+.no-docs-illustration {
+  font-size: 4rem;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .dashboard-sidebar {
+    position: static;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-main {
+    padding: 16px;
+    margin-left: 0;
+  }
+  
+  .doc-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .doc-card {
+    padding: 12px;
+  }
+  
+  .doc-icon {
+    font-size: 1.5rem;
+  }
+  
+  .doc-card h3 {
+    font-size: 14px;
+  }
+  
+  .item-type {
+    font-size: 11px;
+  }
+}
