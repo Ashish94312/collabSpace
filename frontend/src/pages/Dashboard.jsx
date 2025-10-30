@@ -138,7 +138,8 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>📄 CollabSpace</h1>
+        <h1 className="brand"> <span className="doc-icon" aria-hidden="true">
+          <img src="/favicon.ico" alt="CollabSpace" width="28" height="28" decoding="async" /></span> CollabSpace</h1>
         <div className="user-info">
           <span>{user?.email}</span>
           <button onClick={logout}>Logout</button>
@@ -161,7 +162,7 @@ export default function Dashboard() {
             {filteredDocuments.map(doc => (
               <li key={doc.id} onClick={() => navigate(`/editor/${doc.id}`)}>
                 <div className="doc-card">
-                  <div className="doc-icon" aria-hidden="true">📄</div>
+                  <div className="doc-icon" aria-hidden="true">📄</div>    
                   <div className="doc-info">
                     <h3>{doc.title}</h3>
                     <span className="item-type">Document</span>

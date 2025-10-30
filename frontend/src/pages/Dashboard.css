@@ -26,6 +26,17 @@
   font-weight: 500;
 }
 
+
+.dashboard-header .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.dashboard-header .brand img {
+  display: block;
+}
+
 .user-info {
   display: flex;
   align-items: center;
