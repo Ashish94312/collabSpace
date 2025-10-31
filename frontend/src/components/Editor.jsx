@@ -20,7 +20,8 @@ function EditorCanvas({
   handleDrop,
   handleDragOver,
   handleDragLeave,
-  handleEditorClick
+  handleEditorClick,
+  columns = 1
 }) {
   return (
     <div className="editor-body">
@@ -35,7 +36,8 @@ function EditorCanvas({
       <div className="editor-canvas">
         <div
           ref={editorRef}
-          className="editor-page"
+          className="editor-page editor-columns"
+          style={{ '--cols': columns, '--col-gap': '2rem' }}
           data-page-size={pageSize}
           contentEditable
           suppressContentEditableWarning
@@ -78,6 +80,7 @@ function useEditor(docId) {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [history, setHistory] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
+  const [columns, setColumns] = useState(1); 
   const editorRef = useRef(null);
   const socketRef = useRef(null);
 
@@ -1406,6 +1409,8 @@ function useEditor(docId) {
     handleDragOver,
     handleDragLeave,
     handleEditorClick,
+    columns,
+    setColumns,
   };
 }
 

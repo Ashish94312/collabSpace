@@ -880,3 +880,41 @@
     transform: translateY(0);
   }
 }
+
+.columns-inline{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.columns-stepper{
+  display: flex;
+  gap: 6px;
+}
+.columns-range{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.columns-range input[type="range"]{ width: 140px; }
+.columns-value{ min-width: 1.5rem; text-align: right; }
+
+/* === Multi-column MVP === */
+.editor-columns {
+  column-count: var(--cols, 1);
+  column-gap: var(--col-gap, 2rem);
+}
+
+/* Evitar que bloques grandes se partan entre columnas */
+.break-inside-avoid,
+.editor-page img,
+.editor-page table,
+.editor-page pre {
+  break-inside: avoid;
+}
+
+/* Responsive: en pantallas chicas, 1 columna */
+@media (max-width: 640px) {
+  .editor-columns {
+    column-count: 1 !important;
+  }
+}
