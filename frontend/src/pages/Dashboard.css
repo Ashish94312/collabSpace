@@ -1,29 +1,33 @@
 /* === Base Layout === */
 .dashboard-container {
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f1f3f4;
+  background-color: var(--bg-primary, #f1f3f4);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: background-color 0.3s ease;
 }
 
 /* === Header === */
 .dashboard-header {
-  background-color: #fff;
+  background-color: var(--bg-secondary, #ffffff);
   padding: 16px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 4px var(--shadow-light, rgba(0, 0, 0, 0.06));
   position: sticky;
   top: 0;
   z-index: 10;
+  transition: background-color 0.3s ease;
 }
 
 .dashboard-header h1 {
   font-size: 20px;
-  color: #202124;
+  color: var(--text-primary, #202124);
   font-weight: 500;
+  transition: color 0.3s ease;
+  margin: 0;
 }
 
 
@@ -45,11 +49,12 @@
 
 .user-info span {
   font-size: 14px;
-  color: #5f6368;
+  color: var(--text-secondary, #5f6368);
+  transition: color 0.3s ease;
 }
 
 .user-info button {
-  background-color: #d93025;
+  background-color: var(--accent-danger, #d93025);
   color: #fff;
   padding: 6px 14px;
   font-size: 13px;
@@ -60,13 +65,14 @@
 }
 
 .user-info button:hover {
-  background-color: #c5221f;
+  background-color: var(--accent-danger-hover, #c5221f);
 }
 
 /* === Main Content === */
 .dashboard-main {
   padding: 32px;
   flex: 1;
+  transition: all 0.3s ease;
 }
 
 /* === Dashboard Actions === */
@@ -79,7 +85,7 @@
 
 /* === Create Button === */
 .create-button {
-  background-color: #1a73e8;
+  background-color: var(--accent-primary, #1a73e8);
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -91,7 +97,7 @@
 }
 
 .create-button:hover {
-  background-color: #185abc;
+  background-color: var(--accent-primary-hover, #185abc);
   box-shadow: 0 2px 6px rgba(60, 64, 67, 0.3);
 }
 
@@ -110,20 +116,20 @@
   width: 100%;
   max-width: 320px;
   padding: 10px 16px;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--border-color, #cbd5e1);
   border-radius: 24px;
   font-size: 15px;
-  background: #f8fafc;
-  color: #22223b;
+  background: var(--bg-tertiary, #f8fafc);
+  color: var(--text-primary, #202124);
   outline: none;
   transition: border 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.06);
+  box-shadow: 0 1px 3px var(--shadow-light, rgba(60, 64, 67, 0.06));
 }
 
 .search-input:focus {
-  border-color: #2563eb;
+  border-color: var(--accent-primary, #1a73e8);
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
-  background: #fff;
+  background: var(--bg-secondary, #ffffff);
 }
 
 /* === Document Grid === */
@@ -138,10 +144,10 @@
 
 /* === Document Card === */
 .doc-card {
-  background-color: #fff;
+  background-color: var(--bg-secondary, #ffffff);
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.15);
+  box-shadow: 0 1px 3px var(--shadow-light, rgba(60, 64, 67, 0.15));
   transition: box-shadow 0.2s ease, transform 0.1s ease;
   cursor: pointer;
   display: flex;
@@ -164,27 +170,29 @@
 }
 
 .doc-card:hover {
-  box-shadow: 0 4px 10px rgba(60, 64, 67, 0.2);
+  box-shadow: 0 4px 10px var(--shadow-medium, rgba(60, 64, 67, 0.2));
   transform: translateY(-1px) scale(1.03);
 }
 
 .doc-card h3 {
   margin: 0;
   font-size: 16px;
-  color: #202124;
+  color: var(--text-primary, #202124);
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.3s ease;
 }
 
 .item-type {
   font-size: 12px;
-  color: #6c757d;
-  background-color: #f8f9fa;
+  color: var(--text-secondary, #5f6368);
+  background-color: var(--bg-tertiary, #f8fafc);
   padding: 2px 8px;
   border-radius: 12px;
   align-self: flex-start;
+  transition: all 0.3s ease;
 }
 
 /* === Delete Button === */
@@ -204,7 +212,7 @@
 
 .delete-button:hover {
   opacity: 1;
-  background-color: #f8f9fa;
+  background-color: var(--bg-tertiary, #f8fafc);
 }
 
 /* === Label / Status (optional) === */
@@ -225,8 +233,9 @@
   align-items: center;
   justify-content: center;
   margin-top: 48px;
-  color: #5f6368;
+  color: var(--text-secondary, #5f6368);
   gap: 12px;
+  transition: color 0.3s ease;
 }
 
 .no-docs-illustration {
