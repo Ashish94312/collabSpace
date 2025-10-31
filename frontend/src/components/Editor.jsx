@@ -21,6 +21,8 @@ function EditorCanvas({
   handleDragOver,
   handleDragLeave,
   handleEditorClick
+  const [lineSpacing, setLineSpacing] = useState(1.5); // default line spacing e.g. 1.5
+
 }) {
   return (
     <div className="editor-body">
@@ -51,6 +53,24 @@ function EditorCanvas({
           onClick={handleEditorClick}
         />
       </div>
+      <label>
+      Line Spacing:
+      <input
+        type="number"
+        min="1"
+        max="3"
+        step="0.1"
+        value={lineSpacing}
+        onChange={(e) => setLineSpacing(parseFloat(e.target.value))}
+      />
+    </label>
+    <div
+      contentEditable
+      style={{ lineHeight: lineSpacing }}
+    >
+      {content}
+    </div>
+      
     </div>
   );
 }
