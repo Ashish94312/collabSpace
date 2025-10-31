@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import './Dashboard.css'; // Import custom CSS
-// import '../components/DocSearchBar';
+import './Dashboard.css';
 import DocumentSearchBar from '../components/DocSearchBar'; 
 import { switchPage } from '../components/Editor';
 import { isTokenExpired, getTimeUntilExpiration } from '../utils/tokenUtils';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Dashboard() {
   const { user, logout, refreshToken } = useAuth();
@@ -141,6 +141,7 @@ export default function Dashboard() {
         <h1 className="brand"> <span className="doc-icon" aria-hidden="true">
           <img src="/favicon.ico" alt="CollabSpace" width="28" height="28" decoding="async" /></span> CollabSpace</h1>
         <div className="user-info">
+          <ThemeToggle />
           <span>{user?.email}</span>
           <button onClick={logout}>Logout</button>
         </div>
