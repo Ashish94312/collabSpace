@@ -86,6 +86,8 @@ export default function EditorPage() {
     handleDragOver,
     handleDragLeave,
     handleEditorClick,
+    columns,
+    setColumns,
   } = useEditor(docId);
 
 
@@ -777,6 +779,8 @@ ORDER BY post_count DESC;`;
           handleImageUpload={handleImageUpload}
           insertImage={insertImage}
           convertToInlineCode={convertToInlineCode}
+          columns={columns}
+          onChangeColumns={setColumns}
         />
       </div>
 
@@ -800,6 +804,7 @@ ORDER BY post_count DESC;`;
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}
           handleEditorClick={handleEditorClick}
+          columns={columns}
         />
       </main>
     </div>

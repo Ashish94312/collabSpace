@@ -79,3 +79,19 @@ code {
   right: 20px;
   z-index: 10;
 }
+
+/* === Multi-column MVP === */
+.editor-columns {
+  column-count: var(--cols, 1);
+  column-gap: var(--col-gap, 2rem);
+}
+
+.break-inside-avoid {
+  break-inside: avoid;
+}
+
+@media (max-width: 640px) {
+  .editor-columns {
+    column-count: 1 !important;
+  }
+}
