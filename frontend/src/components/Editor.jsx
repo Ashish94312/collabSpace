@@ -21,7 +21,24 @@ function EditorCanvas({
   handleDragOver,
   handleDragLeave,
   handleEditorClick
-}) {
+})
+  async function checkGrammar(text) {
+  const response = await fetch(
+    'https://api.languagetoolplus.com/v2/check',
+    {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        text,
+        language: 'en-US'
+      })
+    }
+  );
+  const data = await response.json();
+  // Parse and display highlights or suggestions
+  // Show errors and corrections
+}
+  {
   return (
     <div className="editor-body">
       <aside className="editor-sidebar">
@@ -37,7 +54,8 @@ function EditorCanvas({
           ref={editorRef}
           className="editor-page"
           data-page-size={pageSize}
-          contentEditable
+          contentEditable={true}
+          spellCheck={true}
           suppressContentEditableWarning
           onInput={handleInput}
           onFocus={handleFocus}
