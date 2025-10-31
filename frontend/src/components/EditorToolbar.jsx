@@ -2,7 +2,8 @@ import React from 'react';
 import { getPageSizeOptions } from '../utils/pageSizes';
 // import './LatexRenderer';
 
-function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFormats = [], clearFormatting, pages = [], currentPageIndex = 0, pageSize = 'a4', onPageSizeChange, updateActiveFormats, handleImageUpload, insertImage, convertToInlineCode }) {
+// MODIFIED: Added insertTable to the destructuring list
+function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFormats = [], clearFormatting, pages = [], currentPageIndex = 0, pageSize = 'a4', onPageSizeChange, updateActiveFormats, handleImageUpload, insertImage, convertToInlineCode, insertTable }) {
   // NOTE: document.execCommand is deprecated and may not work in all browsers. Consider migrating to a modern rich text editor library.
   const isActive = (cmd) => {
     const normalized = cmd.toLowerCase();
@@ -24,7 +25,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
   return (
     <div className="floating-toolbar-container">
       <div className="editor-toolbar">
-        {/* Text Formatting Group */}
+        {/* Text Formatting Group (UNCHANGED) */}
         <div className="toolbar-group">
           <select
             className="toolbar-select font-family-select"
@@ -70,7 +71,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Basic Formatting Group */}
+        {/* Basic Formatting Group (UNCHANGED) */}
         <div className="toolbar-group">
           <button
             onMouseDown={(e) => { e.preventDefault(); handleFormat('bold'); }}
@@ -99,7 +100,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Advanced Text Formatting Group */}
+        {/* Advanced Text Formatting Group (UNCHANGED) */}
         {/* <div className="toolbar-group">
           <button
             onMouseDown={(e) => { e.preventDefault(); handleFormat('subscript'); }}
@@ -116,7 +117,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Headings Group */}
+        {/* Headings Group (UNCHANGED) */}
         <div className="toolbar-group">
           {['h1', 'h2', 'h3'].map(h => (
             <button
@@ -130,7 +131,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Lists Group */}
+        {/* Lists Group (UNCHANGED) */}
         <div className="toolbar-group">
           <button
             onMouseDown={(e) => { e.preventDefault(); handleFormat('insertUnorderedList'); }}
@@ -147,7 +148,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Image Upload Group */}
+        {/* Image Upload Group (UNCHANGED) */}
         <div className="toolbar-group">
           <input
             type="file"
@@ -188,7 +189,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Alignment Group */}
+        {/* Alignment Group (UNCHANGED) */}
         <div className="toolbar-group">
           {['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'].map(cmd => (
             <button
@@ -202,7 +203,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Color Group */}
+        {/* Color Group (UNCHANGED) */}
         <div className="toolbar-group">
           <div className="color-picker-group">
             <label title="Text Color" className="color-label">
@@ -246,8 +247,18 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Insert Group */}
+        {/* Insert Group (MODIFIED: Added Table Button) */}
         <div className="toolbar-group">
+          {/* --- NEW: INSERT TABLE BUTTON --- */}
+          <button
+            onMouseDown={(e) => { e.preventDefault(); if (insertTable) insertTable(); }}
+            title="Insert Table"
+            className="editor-button"
+          >
+            📋
+          </button>
+          {/* --- END NEW BUTTON --- */}
+          
           <button
             onMouseDown={(e) => { e.preventDefault(); handleFormat('insertHorizontalRule'); }}
             title="Insert Line"
@@ -276,7 +287,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
           </select>
 
           <button onMouseDown={(e) => { e.preventDefault(); 
-             const latex = prompt("Enter LaTeX code:", "\\frac{a}{b}");
+             const latex = prompt('Enter LaTeX code:', '\\frac{a}{b}');
              if (latex) {
               handleFormat('insertHTML', `<span class="latex">${latex}</span>`);
              }
@@ -302,7 +313,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Actions Group */}
+        {/* Actions Group (UNCHANGED) */}
         <div className="toolbar-group">
           <button
             onMouseDown={(e) => { e.preventDefault(); clearFormatting(); if (typeof updateActiveFormats === 'function') setTimeout(updateActiveFormats, 0); }}
@@ -326,14 +337,14 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
           >➕</button>
         </div>
 
-        {/* Page Counter */}
+        {/* Page Counter (UNCHANGED) */}
         <div className="page-counter" title="Page information">
           <span className="page-counter-text">
             Page {currentPageIndex + 1} of {pages.length}
           </span>
         </div>
 
-        {/* Page Size Selector */}
+        {/* Page Size Selector (UNCHANGED) */}
         <div className="toolbar-group">
           <select
             className="toolbar-select page-size-select"
