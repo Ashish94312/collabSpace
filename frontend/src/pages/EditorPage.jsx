@@ -7,6 +7,7 @@ import InviteUser from './Invite'
 import { debounce } from 'lodash'
 import { getPageSize } from '../utils/pageSizes'
 import PageList from '../components/PageList'
+import ThemeToggle from '../components/ThemeToggle';
 
 import './EditorPage.css'
 
@@ -891,7 +892,8 @@ ORDER BY post_count DESC;`
             placeholder='Untitled Document'
           />
         </div>
-        <div className='editor-header-right'>
+        <div className="editor-header-right">
+          <ThemeToggle />
           <InviteUser documentId={docId} />
         </div>
       </header>

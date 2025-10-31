@@ -9,12 +9,13 @@ import AuthSuccess from './pages/AuthSuccess';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (
+    <ThemeProvider>
     <AuthProvider>
       <Routes>
-        <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={
@@ -33,8 +34,9 @@ function App() {
           </ProtectedRoute>
         } />
 
-      </Routes>
-    </AuthProvider>
+        </Routes>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
