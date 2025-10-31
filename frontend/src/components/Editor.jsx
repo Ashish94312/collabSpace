@@ -4,6 +4,10 @@ import EnhancedPageControls from './EnhancedPageControls';
 import './Editor.css';
 import './LatexRenderer';
 
+function countWords(text) {
+  if (!text) return 0;
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
 function EditorCanvas({
   pages,
   currentPageIndex,
@@ -21,6 +25,10 @@ function EditorCanvas({
   handleDragOver,
   handleDragLeave,
   handleEditorClick
+  const [wordCount, setWordCount] = useState(0);
+  function handleInput(event) {
+    const text = event.target.innerText || '';
+    setWordCount(countWords(text));
 }) {
   return (
     <div className="editor-body">
@@ -50,6 +58,9 @@ function EditorCanvas({
           onDragLeave={handleDragLeave}
           onClick={handleEditorClick}
         />
+      </div>
+      <div className="analytics-summary">
+      <p>Word Count: {wordCount}</p>
       </div>
     </div>
   );
