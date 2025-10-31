@@ -1,27 +1,23 @@
-/* ===============================
-   Base Container
-================================== */
 .editor-container {
   min-height: 100vh;
-  background-color: #f9fafb;
+  background-color: var(--bg-primary, #f1f3f4);
   font-family: 'Segoe UI', sans-serif;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  transition: background-color 0.3s ease;
 }
 
-/* ===============================
-   Editor Header
-================================== */
 .editor-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: var(--bg-secondary, #ffffff);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: 0 1px 3px var(--shadow-light, rgba(60, 64, 67, 0.06));
   z-index: 200;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .editor-header-left {
@@ -34,10 +30,10 @@
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
-  background: #ffffff;
-  color: #374151;
+  background: var(--bg-secondary, #ffffff);
+  color: var(--text-primary, #202124);
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -45,10 +41,9 @@
 }
 
 .back-button:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
+  background: var(--bg-tertiary, #f8fafc);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light, rgba(60, 64, 67, 0.06));
 }
 
 .editor-title-input {
@@ -56,20 +51,20 @@
   outline: none;
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-primary, #202124);
   background: transparent;
   min-width: 200px;
   padding: 4px 8px;
   border-radius: 4px;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, color 0.3s ease;
 }
 
 .editor-title-input:hover {
-  background: #f8fafc;
+  background: var(--bg-tertiary, #f8fafc);
 }
 
 .editor-title-input:focus {
-  background: #f8fafc;
+  background: var(--bg-tertiary, #f8fafc);
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
@@ -79,9 +74,6 @@
   gap: 12px;
 }
 
-/* ===============================
-   Editor Main Content
-================================== */
 .editor-main {
   flex: 1;
   display: flex;
@@ -93,9 +85,6 @@
   overflow-x: hidden;
 }
 
-/* ===============================
-   Floating Toolbar
-================================== */
 .floating-toolbar-container {
   display: flex;
   justify-content: center;
@@ -110,14 +99,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #ffffff;
+  background: var(--bg-secondary, #ffffff);
   padding: 12px 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px var(--shadow-medium, rgba(60, 64, 67, 0.15));
   backdrop-filter: blur(8px);
   max-width: fit-content;
   flex-wrap: wrap;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .toolbar-group {
@@ -129,13 +119,11 @@
 .toolbar-divider {
   width: 1px;
   height: 24px;
-  background: #e2e8f0;
+  background: var(--border-color, #e2e8f0);
   margin: 0 4px;
+  transition: background-color 0.3s ease;
 }
 
-/* ===============================
-   Buttons & Selects
-================================== */
 .editor-button {
   display: flex;
   align-items: center;
@@ -143,10 +131,10 @@
   min-width: 36px;
   height: 36px;
   padding: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
-  background: #ffffff;
-  color: #374151;
+  background: var(--bg-secondary, #ffffff);
+  color: var(--text-primary, #202124);
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -155,26 +143,25 @@
 }
 
 .editor-button:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
+  background: var(--bg-tertiary, #f8fafc);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light, rgba(60, 64, 67, 0.06));
 }
 
 .editor-button.active {
-  background: #3b82f6;
+  background: var(--accent-primary, #1a73e8);
   color: #ffffff;
-  border-color: #3b82f6;
+  border-color: var(--accent-primary, #1a73e8);
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   font-weight: 600;
 }
 
 .toolbar-select {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
-  background: #ffffff;
-  color: #374151;
+  background: var(--bg-secondary, #ffffff);
+  color: var(--text-primary, #202124);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -183,123 +170,30 @@
 }
 
 .toolbar-select:hover {
-  border-color: #94a3b8;
-  background: #f8fafc;
+  background: var(--bg-tertiary, #f8fafc);
 }
 
 .toolbar-select:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--accent-primary, #1a73e8);
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
-.font-family-select {
-  min-width: 140px;
-}
-.font-size-select {
-  min-width: 80px;
-}
-.page-size-select {
-  min-width: 160px;
-}
-
-/* ===============================
-   Color Picker
-================================== */
-.color-picker-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  background: #f8fafc;
-}
-
-.color-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #6b7280;
-  transition: background 0.2s ease;
-}
-
-.color-label:hover {
-  background: #e2e8f0;
-}
-
-.color-input {
-  width: 24px;
-  height: 24px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-}
-
-.color-input:hover {
-  border-color: #94a3b8;
-}
-
-/* ===============================
-   Page Counter
-================================== */
-.page-counter {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 500;
-  user-select: none;
-  margin-left: 8px;
-}
-.page-counter-text {
-  white-space: nowrap;
-}
-
-/* ===============================
-   Editor Layout: Sidebar + Canvas
-================================== */
-.editor-body {
-  display: flex;
-  gap: 24px;
-  padding: 32px 0;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-/* ===============================
-   Sidebar
-================================== */
 .editor-sidebar {
   width: 260px;
   flex-shrink: 0;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
   padding: 16px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px var(--shadow-light, rgba(60, 64, 67, 0.06));
   height: fit-content;
   position: sticky;
   top: 120px;
   max-height: calc(100vh - 140px);
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.page-controls-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .page-nav-btn {
@@ -307,10 +201,10 @@
   align-items: center;
   justify-content: center;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
-  background: #ffffff;
-  color: #374151;
+  background: var(--bg-secondary, #ffffff);
+  color: var(--text-primary, #202124);
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
@@ -319,23 +213,19 @@
 }
 
 .page-nav-btn:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
+  background: var(--bg-tertiary, #f8fafc);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light, rgba(60, 64, 67, 0.06));
 }
 
 .page-nav-btn.active {
-  background: #3b82f6;
+  background: var(--accent-primary, #1a73e8);
   color: #ffffff;
-  border-color: #3b82f6;
+  border-color: var(--accent-primary, #1a73e8);
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   font-weight: 600;
 }
 
-/* ===============================
-   Editor Canvas
-================================== */
 .editor-canvas {
   flex: 1;
   display: flex;
@@ -346,94 +236,46 @@
   padding: 20px 0;
 }
 
-/* ===============================
-   Editable Page
-================================== */
 .editor-page {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
   width: 100%;
-  max-width: 794px; /* A4 width */
-  min-height: 1123px; /* A4 height */
+  max-width: 794px;
+  min-height: 1123px;
   padding: 60px 80px;
   border-radius: 12px;
   line-height: 1.7;
   font-size: 16px;
   outline: none;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 32px var(--shadow-medium, rgba(60, 64, 67, 0.15));
   font-family: 'Georgia', 'Times New Roman', serif;
   transition: all 0.3s ease;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-}
-
-/* Page Sizes */
-.editor-page[data-page-size="a4"] {
-  max-width: 794px;
-  min-height: 1123px;
-}
-
-.editor-page[data-page-size="letter"] {
-  max-width: 816px;
-  min-height: 1056px;
-}
-
-.editor-page[data-page-size="legal"] {
-  max-width: 816px;
-  min-height: 1344px;
-}
-
-.editor-page[data-page-size="a3"] {
-  max-width: 1123px;
-  min-height: 1587px;
-}
-
-.editor-page[data-page-size="a5"] {
-  max-width: 560px;
-  min-height: 794px;
-}
-
-.editor-page[data-page-size="tabloid"] {
-  max-width: 1056px;
-  min-height: 1632px;
+  color: var(--text-primary, #202124);
 }
 
 .editor-page:focus {
-  border-color: #3b82f6;
+  border-color: var(--accent-primary, #1a73e8);
   box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
 }
 
-/* ===============================
-   Loading State
-================================== */
-.editor-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  gap: 16px;
-  color: #6b7280;
+/* Dark mode overrides */
+[data-theme="dark"] .editor-page * {
+  color: var(--text-primary) !important;
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #e2e8f0;
-  border-top: 3px solid #3b82f6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+[data-theme="dark"] .editor-button:not(.active),
+[data-theme="dark"] .toolbar-select,
+[data-theme="dark"] .page-nav-btn:not(.active) {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
 }
 
 /* ===============================
    Responsive Design
-================================== */
 @media (max-width: 1200px) {
   .editor-body {
     gap: 20px;
@@ -658,4 +500,9 @@
     font-size: 12px;
     padding: 6px 8px;
   }
+[data-theme="dark"] .editor-button.active,
+[data-theme="dark"] .page-nav-btn.active {
+  background-color: var(--accent-primary) !important;
+  color: #ffffff !important;
+  border-color: var(--accent-primary) !important;
 }
