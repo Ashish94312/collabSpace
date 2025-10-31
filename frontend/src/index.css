@@ -79,3 +79,39 @@ code {
   right: 20px;
   z-index: 10;
 }
+
+/* Accent Hover Shadow on Theme Button for Better Feedback */
+.theme-toggle:active {
+  transform: translateY(1.5px) scale(0.96);
+  box-shadow: 0 2px 8px var(--shadow-heavy);
+}
+
+/* Gradient Highlights for Buttons */
+.btn {
+  background: linear-gradient(95deg, var(--accent-primary) 60%, var(--accent-primary-hover));
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 8px var(--shadow-light);
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.btn:hover {
+  background: linear-gradient(90deg, var(--accent-primary-hover), var(--accent-primary));
+  box-shadow: 0 4px 18px var(--shadow-medium);
+  transform: translateY(-1.5px) scale(1.02);
+}
+
+/* Smoother Border + Outline for Interactive Elements */
+input, textarea, select, .theme-toggle {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+input:focus, textarea:focus, select:focus, .theme-toggle:focus {
+  outline: 2.5px solid var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+/* Smooth Color Transitions */
+body, .card, .theme-toggle, .button-primary {
+  transition: background 0.3s, color 0.3s, box-shadow 0.25s, border-color 0.25s;
+}
