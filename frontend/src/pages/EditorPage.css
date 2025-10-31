@@ -274,6 +274,232 @@
   border-color: var(--border-color) !important;
 }
 
+/* ===============================
+   Responsive Design
+@media (max-width: 1200px) {
+  .editor-body {
+    gap: 20px;
+    padding: 20px 0;
+  }
+
+  .editor-sidebar {
+    width: 240px;
+    padding: 12px;
+  }
+
+  .editor-page {
+    padding: 50px 60px;
+  }
+
+  .editor-page[data-page-size="a3"],
+  .editor-page[data-page-size="tabloid"] {
+    max-width: 90vw;
+    min-height: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .editor-header-left {
+    justify-content: space-between;
+  }
+
+  .editor-title-input {
+    min-width: 150px;
+    font-size: 16px;
+  }
+
+  .editor-main {
+    padding: 0 16px;
+  }
+
+  .editor-body {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 0;
+  }
+
+  .editor-sidebar {
+    width: 100%;
+    position: static;
+    order: 2;
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: hidden;
+  }
+
+  .page-controls-vertical {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .page-nav-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .editor-canvas {
+    order: 1;
+  }
+
+  .editor-page {
+    padding: 40px 30px;
+    min-height: 800px;
+    max-width: 95vw;
+  }
+
+  .editor-page[data-page-size] {
+    max-width: 95vw;
+    min-height: 800px;
+  }
+
+  .editor-toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+  }
+
+  .toolbar-group {
+    gap: 2px;
+  }
+
+  .editor-button {
+    min-width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .toolbar-select {
+    min-width: 80px;
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .editor-header-left {
+    justify-content: space-between;
+  }
+
+  .editor-title-input {
+    min-width: 150px;
+    font-size: 16px;
+  }
+
+  .editor-main {
+    padding: 0 16px;
+  }
+
+  /* Make main editor area responsive with horizontal scroll if needed */
+  .editor-body {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 0;
+    overflow-x: auto; /* horizontal scroll for small screens */
+    scrollbar-width: thin;
+  }
+
+  .editor-body::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .editor-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 8px;
+  }
+
+  /* Sidebar below main editor */
+  .editor-sidebar {
+    width: 100%;
+    position: static;
+    order: 2;
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: hidden;
+  }
+
+  .page-controls-vertical {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .page-nav-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  /* Canvas adjusts but scrolls horizontally if content overflows */
+  .editor-canvas {
+    order: 1;
+    overflow-x: auto;
+  }
+
+  .editor-page {
+    padding: 40px 30px;
+    min-height: 800px;
+    max-width: 95vw;
+  }
+
+  .editor-page[data-page-size] {
+    max-width: 95vw;
+    min-height: 800px;
+  }
+
+  /* Toolbar horizontally scrollable */
+  .floating-toolbar-container {
+    display: flex;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 8px 0;
+    scrollbar-width: thin;
+  }
+
+  .floating-toolbar-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .floating-toolbar-container::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 8px;
+  }
+
+  .editor-toolbar {
+    flex-wrap: nowrap;
+    width: max-content;
+    gap: 6px;
+    padding: 8px 12px;
+  }
+
+  .toolbar-group {
+    gap: 2px;
+  }
+
+  .editor-button {
+    min-width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .toolbar-select {
+    min-width: 80px;
+    font-size: 12px;
+    padding: 6px 8px;
+  }
 [data-theme="dark"] .editor-button.active,
 [data-theme="dark"] .page-nav-btn.active {
   background-color: var(--accent-primary) !important;
