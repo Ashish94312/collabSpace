@@ -80,6 +80,13 @@
         button:hover {
             background: #0056b3;
         }
+        mark {
+          background-color: #fff59d;
+          border-radius: 2px;
+          padding: 0 3px;
+          transition: background 0.2s;
+        }
+
     </style>
 </head>
 <body>
@@ -96,6 +103,8 @@
     <div style="margin-top: 10px;">
         <button onclick="convertToInlineCode()">Convert to Inline Code</button>
     </div>
+    
+    <button onclick="highlightSelection()">Highlight Text</button>
     
     <div id="editor" class="editor" contenteditable="true">
         Click here and then click a button to insert code blocks...
@@ -451,6 +460,28 @@ function hello() {
         
         // Focus editor on load
         document.getElementById('editor').focus();
+
+        function highlightSelection() {
+          const selection = window.getSelection();
+          if (!selection.rangeCount) return;
+          const range = selection.getRangeAt(0);
+          if (range.collapsed) return; // Nothing selected
+
+          // Create a <mark> element for highlight
+          const mark = document.createElement("mark");
+          mark.style.backgroundColor = "#fff59d"; // Soft yellow
+
+          try {
+            range.surroundContents(mark);
+          } catch (err) {
+            // Fallback for non-HTML nodes or complex selections
+            document.execCommand('hiliteColor', false, '#fff59d');
+          }
+  
+          // Clean up selection
+          selection.removeAllRanges();
+        }
+
     </script>
 </body>
 </html>
