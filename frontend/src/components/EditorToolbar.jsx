@@ -280,19 +280,62 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             <option value="bash">💻 Bash</option>
           </select>
 
-          <button onMouseDown={(e) => { e.preventDefault(); 
-             const latex = prompt("Enter LaTeX code:", "\\frac{a}{b}");
-             if (latex) {
-              handleFormat('insertHTML', `<span class="latex">${latex}</span>`);
-             }
-            }}
-             title ="Insert LaTeX Code"
-             className="editor-button"
-             >  ∑ƒ(x)</button>
+  <button
+onMouseDown={(e) => {
+  e.preventDefault();
+  const formula = prompt("Enter LaTeX formula (e.g., E = mc^2):");
+  if (formula) {
+    const editorDiv = document.querySelector(".editor-page");
+    if (editorDiv) {
+      editorDiv.focus();
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        const range = document.createRange();
+        range.selectNodeContents(editorDiv);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      const range = selection.getRangeAt(0);
+
+      const marker = document.createElement("span");
+      marker.className = "formula-marker";
+      marker.textContent = `\\(${formula}\\)`;
+
+      range.insertNode(marker);
+      range.setStartAfter(marker);
+      range.setEndAfter(marker);
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      const event = new Event("input", { bubbles: true });
+      editorDiv.dispatchEvent(event);
+
+      setTimeout(() => {
+        if (window.MathJax) {
+          // Try typeset instead of typesetPromise
+          window.MathJax.typeset();
+          // Or fallback:
+          // window.MathJax.typesetPromise([editorDiv]).catch(console.error);
+        }
+      }, 300);
+    }
+  } else {
+    const editorDiv = document.querySelector(".editor-page");
+    if (editorDiv) editorDiv.focus();
+  }
+}}
+
+
+  title="Insert LaTeX Code"
+  className="editor-button"
+>
+  ∑ƒ(x)
+</button>
 
 
 
-          <button
+    <button
             onMouseDown={(e) => { 
               e.preventDefault(); 
               if (convertToInlineCode) {
