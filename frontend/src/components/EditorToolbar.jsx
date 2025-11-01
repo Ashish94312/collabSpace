@@ -2,7 +2,7 @@ import React from 'react';
 import { getPageSizeOptions } from '../utils/pageSizes';
 // import './LatexRenderer';
 
-function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFormats = [], clearFormatting, pages = [], currentPageIndex = 0, pageSize = 'a4', onPageSizeChange, updateActiveFormats, handleImageUpload, insertImage, convertToInlineCode, columns = 1, onChangeColumns}) {
+function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFormats = [], clearFormatting, pages = [], currentPageIndex = 0, pageSize = 'a4', onPageSizeChange, updateActiveFormats, handleImageUpload, insertImage, convertToInlineCode, headerEnabled, footerEnabled, onToggleHeader, onToggleFooter, columns = 1, onChangeColumns}) {
 // NOTE: document.execCommand is deprecated and may not work in all browsers. Consider migrating to a modern rich text editor library.
   const isActive = (cmd) => {
     const normalized = cmd.toLowerCase();
@@ -357,8 +357,25 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             ))}
           </select>
         </div>
-        <div className="toolbar-divider"></div>
 
+        <div className="toolbar-divider"></div>
+        {/* Header/Footer toggles */}
+        <div className="toolbar-group">
+          <button
+            onMouseDown={(e)=>{e.preventDefault(); onToggleHeader?.();}}
+            className="editor-button"
+            title={headerEnabled ? "Disable Header" : "Enable Header"}
+          >
+            H
+          </button>
+          <button
+            onMouseDown={(e)=>{e.preventDefault(); onToggleFooter?.();}}
+            className="editor-button"
+            title={footerEnabled ? "Disable Footer" : "Enable Footer"}
+          >
+            F
+          </button>
+        </div>
         {/* Columns Group (1–6) */}
         <div className="toolbar-group columns-inline">
           <div className="columns-stepper">
@@ -379,7 +396,6 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             <span className="columns-value">{columns}</span>
           </label>
         </div>
-
       </div>
     </div>
   );

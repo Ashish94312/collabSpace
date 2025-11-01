@@ -21,8 +21,39 @@ function EditorCanvas({
   handleDragOver,
   handleDragLeave,
   handleEditorClick,
-  columns = 1
+  columns = 1,
+  headerEnabled = false, footerEnabled = false,
+  headerHTML = '', footerHTML = '',
+  onHeaderInput, onFooterInput,
+  headerHeight = 72, footerHeight = 56,
 }) {
+  const pageVars = {
+    '--header-h': headerEnabled ? `${headerHeight}px` : '0px',
+    '--footer-h': footerEnabled ? `${footerHeight}px` : '0px',
+  };
+
+  // ← NUEVO: refs para header/footer (no controlados)
+  const headerRef = useRef(null);
+  const footerRef = useRef(null);
+
+  // ← Inicializa UNA SOLA VEZ el contenido (no en cada tecla)
+  useEffect(() => {
+    if (headerRef.current && headerHTML != null) {
+      headerRef.current.innerHTML = headerHTML || '';
+    }
+    if (footerRef.current && footerHTML != null) {
+      footerRef.current.innerHTML = footerHTML || '';
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // no dependas de headerHTML/footerHTML para que no se reproyecte el caret
+
+  const handleHeaderInputLocal = () => {
+    onHeaderInput?.(headerRef.current?.innerHTML || '');
+  };
+  const handleFooterInputLocal = () => {
+    onFooterInput?.(footerRef.current?.innerHTML || '');
+  };
+
   return (
     <div className="editor-body">
       <aside className="editor-sidebar">
@@ -33,25 +64,63 @@ function EditorCanvas({
           deletePage={deletePage}
         />
       </aside>
-      <div className="editor-canvas">
+
+      <div
+        className="editor-canvas"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {/* TODA la página (header/body/footer) comparte el MISMO contenedor */}
         <div
           ref={editorRef}
           className="editor-page editor-columns"
-          style={{ '--cols': columns, '--col-gap': '2rem' }}
           data-page-size={pageSize}
-          contentEditable
-          suppressContentEditableWarning
-          onInput={handleInput}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onMouseUp={handleMouseUp}
-          onKeyUp={handleKeyUp}
-          onPaste={handlePaste}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
+          style={{
+            ...pageVars,
+            ['--cols']: String(columns),
+            ['--col-gap']: '2rem',
+          }}
           onClick={handleEditorClick}
-        />
+        >
+          {headerEnabled && (
+            <div
+              className="page-header"     // ← antes era page-header-band
+              ref={headerRef}
+              contentEditable
+              suppressContentEditableWarning
+              dir="ltr"
+              onInput={handleHeaderInputLocal}
+              data-placeholder="Header (title • date • page)"
+            />
+          )}
+
+          <div
+            className="page-body"
+            ref={editorRef}
+            contentEditable
+            suppressContentEditableWarning
+            dir="ltr"
+            onInput={handleInput}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onMouseUp={handleMouseUp}
+            onKeyUp={handleKeyUp}
+            onPaste={handlePaste}
+          />
+
+          {footerEnabled && (
+            <div
+              className="page-footer"     // ← antes era page-footer-band
+              ref={footerRef}
+              contentEditable
+              suppressContentEditableWarning
+              dir="ltr"
+              onInput={handleFooterInputLocal}
+              data-placeholder="Footer (author • Page X)"
+            />
+          )}
+        </div>
       </div>
     </div>
   );

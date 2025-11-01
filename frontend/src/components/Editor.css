@@ -918,3 +918,128 @@
     column-count: 1 !important;
   }
 }
+
+/* === Header / Footer bands (override final) === */
+.editor-canvas {
+  position: relative; /* Para que las bandas absolutas tomen este contenedor */
+}
+
+/* Bandas editables */
+.page-header-band,
+.page-footer-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 10px 18px !important; /* vence el reset anterior */
+  z-index: 2;
+  background: transparent;
+  color: #374151;
+  pointer-events: auto;
+  border: 0;
+}
+
+.page-header-band {
+  top: 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+.page-footer-band {
+  bottom: 0;
+  border-top: 1px dashed #e2e8f0;
+}
+
+/* Placeholder cuando están vacías */
+.page-header-band:empty::before,
+.page-footer-band:empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Ajuste de padding de la página para no tapar el texto */
+.editor-page {
+  /* Tu CSS pone padding: 60px 80px !important;
+     aquí lo sobreescribimos para sumar las bandas */
+  padding: calc(60px + var(--header-h, 0px)) 80px
+           calc(60px + var(--footer-h, 0px)) 80px !important;
+  position: relative; /* por seguridad */
+  z-index: 1;         /* el contenido queda debajo de las bandas */
+}
+
+/* El reset global que hace padding:0 !important en .editor-page * 
+   NO debe afectar a las bandas: forzamos su padding otra vez */
+.page-header-band *, .page-footer-band * {
+  padding: 0 !important;
+}
+
+.editor-page {
+  direction: ltr !important;
+  unicode-bidi: isolate !important; /* evita overrides heredados */
+  text-align: left;
+  writing-mode: horizontal-tb;
+}
+
+.editor-page * {
+  unicode-bidi: normal; /* quita posibles bidi-override de spans */
+  direction: ltr;
+}
+
+.editor-page { position: relative; box-sizing: border-box; }
+.editor-page { --header-h: 0px; --footer-h: 0px; }
+
+/* Franjas de header/footer con el MISMO ancho que la página */
+.page-header, .page-footer {
+  position: absolute;
+  left: 0; right: 0; width: 100%;
+  box-sizing: border-box;
+  padding: 8px 24px;
+  background: transparent;
+  text-align: left;
+}
+
+.page-header {
+  top: 0;
+  min-height: var(--header-h);
+  border-bottom: 1px dashed #d1d5db;
+}
+
+.page-footer {
+  bottom: 0;
+  min-height: var(--footer-h);
+  border-top: 1px dashed #d1d5db;
+}
+
+/* El cuerpo deja espacio reservado arriba/abajo */
+.page-body {
+  min-height: calc(100% - var(--header-h) - var(--footer-h));
+  padding-top: var(--header-h);
+  padding-bottom: var(--footer-h);
+}
+
+/* Que nada fuerce RTL ni reinicie padding en header/footer */
+.page-header *, .page-footer * {
+  line-height: 1.2 !important;
+  margin: 0; padding: 0;
+  direction: ltr;
+  unicode-bidi: plaintext;
+}
+/* Evita que parezca un marco negro enorme */
+.editor-page pre {
+  background-color: #f8fafc;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 8px 0;
+  white-space: pre-wrap;      /* permite “wrap” dentro del código */
+  word-break: break-word;     /* por si hay líneas muy largas */
+  min-height: auto;           /* sin altura excesiva */
+}
+
+/* Un placeholder discreto si está vacío */
+.editor-page pre:empty::before {
+  content: 'Code';
+  color: #94a3b8;
+}
+
+/* Asegura que el cuerpo no muestre contorno raro al enfocar */
+.page-body:focus { outline: none; }
+

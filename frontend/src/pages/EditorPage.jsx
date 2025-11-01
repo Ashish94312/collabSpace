@@ -16,7 +16,44 @@ export default function EditorPage() {
   const [loading, setLoading] = useState(true);
   const [activeFormats, setActiveFormats] = useState([]);
   const [pageSize, setPageSize] = useState('a4');
+    // === Header/Footer state ===
+  const [headerEnabled, setHeaderEnabled] = useState(
+    localStorage.getItem(`doc:${docId}:headerEnabled`) === 'true'
+  );
+  const [footerEnabled, setFooterEnabled] = useState(
+    localStorage.getItem(`doc:${docId}:footerEnabled`) === 'true'
+  );
 
+  const [headerHTML, setHeaderHTML] = useState(
+    localStorage.getItem(`doc:${docId}:headerHTML`) || ''
+  );
+  const [footerHTML, setFooterHTML] = useState(
+    localStorage.getItem(`doc:${docId}:footerHTML`) || ''
+  );
+
+  // Alturas (px) por defecto: puedes exponer sliders si quieres
+  const [headerHeight] = useState(72);
+  const [footerHeight] = useState(56);
+
+  const toggleHeader = () => {
+    const next = !headerEnabled;
+    setHeaderEnabled(next);
+    localStorage.setItem(`doc:${docId}:headerEnabled`, String(next));
+  };
+  const toggleFooter = () => {
+    const next = !footerEnabled;
+    setFooterEnabled(next);
+    localStorage.setItem(`doc:${docId}:footerEnabled`, String(next));
+  };
+
+  const handleHeaderInput = (html) => {
+    setHeaderHTML(html);
+    localStorage.setItem(`doc:${docId}:headerHTML`, html);
+  };
+  const handleFooterInput = (html) => {
+    setFooterHTML(html);
+    localStorage.setItem(`doc:${docId}:footerHTML`, html);
+  };
   const updateActiveFormats = () => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
@@ -781,6 +818,10 @@ ORDER BY post_count DESC;`;
           convertToInlineCode={convertToInlineCode}
           columns={columns}
           onChangeColumns={setColumns}
+          headerEnabled={headerEnabled}
+          footerEnabled={footerEnabled}
+          onToggleHeader={toggleHeader}
+          onToggleFooter={toggleFooter}
         />
       </div>
 
@@ -805,6 +846,14 @@ ORDER BY post_count DESC;`;
           handleDragLeave={handleDragLeave}
           handleEditorClick={handleEditorClick}
           columns={columns}
+          headerEnabled={headerEnabled}
+          footerEnabled={footerEnabled}
+          headerHTML={headerHTML}
+          footerHTML={footerHTML}
+          onHeaderInput={handleHeaderInput}
+          onFooterInput={handleFooterInput}
+          headerHeight={headerHeight}
+          footerHeight={footerHeight}
         />
       </main>
     </div>
