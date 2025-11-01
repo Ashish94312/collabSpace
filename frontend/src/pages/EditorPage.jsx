@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import useEditor, { EditorCanvas } from '../components/Editor';
 import EditorToolbar from '../components/EditorToolbar';
 import InviteUser from './Invite';
+import ThemeToggle from '../components/ThemeToggle';
 import { debounce } from 'lodash';
 import { getPageSize } from '../utils/pageSizes';
 
@@ -85,6 +86,8 @@ export default function EditorPage() {
     handleDragOver,
     handleDragLeave,
     handleEditorClick,
+    columns,
+    setColumns,
   } = useEditor(docId);
 
 
@@ -754,6 +757,7 @@ ORDER BY post_count DESC;`;
           />
         </div>
         <div className="editor-header-right">
+          <ThemeToggle />
           <InviteUser documentId={docId} />
         </div>
       </header>
@@ -775,6 +779,8 @@ ORDER BY post_count DESC;`;
           handleImageUpload={handleImageUpload}
           insertImage={insertImage}
           convertToInlineCode={convertToInlineCode}
+          columns={columns}
+          onChangeColumns={setColumns}
         />
       </div>
 
@@ -798,6 +804,7 @@ ORDER BY post_count DESC;`;
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}
           handleEditorClick={handleEditorClick}
+          columns={columns}
         />
       </main>
     </div>

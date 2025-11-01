@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import './Signup.css'; // Custom CSS file
+import './Signup.css';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Signup() {
   const { signup, error, loading, setError } = useAuth();
@@ -30,6 +31,9 @@ export default function Signup() {
 
   return (
     <div className="signup-container">
+      <div className="theme-toggle-container">
+        <ThemeToggle />
+      </div>
       <div className="signup-card">
         <h1 className="app-title">CollabSpace</h1>
         <h2 className="signup-title">Create a new account</h2>

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import './Dashboard.css'; // Import custom CSS
-// import '../components/DocSearchBar';
+import './Dashboard.css';
 import DocumentSearchBar from '../components/DocSearchBar'; 
 import { switchPage } from '../components/Editor';
 import { isTokenExpired, getTimeUntilExpiration } from '../utils/tokenUtils';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Dashboard() {
   const { user, logout, refreshToken } = useAuth();
@@ -107,8 +107,6 @@ export default function Dashboard() {
 
 
   const createDocument = async () => {
-    const title = prompt('Enter document title:');
-    if (!title) return;
     try {
       const res = await fetch('http://localhost:3000/api/documents', {
         method: 'POST',
@@ -116,7 +114,7 @@ export default function Dashboard() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify({ title }),
+        body: JSON.stringify({ title: 'Untitled Document' }),
       });
 
       const doc = await res.json();
@@ -140,8 +138,10 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>📄 CollabSpace</h1>
+        <h1 className="brand"> <span className="doc-icon" aria-hidden="true">
+          <img src="/favicon.ico" alt="CollabSpace" width="28" height="28" decoding="async" /></span> CollabSpace</h1>
         <div className="user-info">
+          <ThemeToggle />
           <span>{user?.email}</span>
           <button onClick={logout}>Logout</button>
         </div>
@@ -163,7 +163,7 @@ export default function Dashboard() {
             {filteredDocuments.map(doc => (
               <li key={doc.id} onClick={() => navigate(`/editor/${doc.id}`)}>
                 <div className="doc-card">
-                  <div className="doc-icon" aria-hidden="true">📄</div>
+                  <div className="doc-icon" aria-hidden="true">📄</div>    
                   <div className="doc-info">
                     <h3>{doc.title}</h3>
                     <span className="item-type">Document</span>

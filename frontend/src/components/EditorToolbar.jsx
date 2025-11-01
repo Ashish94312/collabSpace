@@ -2,8 +2,8 @@ import React from 'react';
 import { getPageSizeOptions } from '../utils/pageSizes';
 // import './LatexRenderer';
 
-function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFormats = [], clearFormatting, pages = [], currentPageIndex = 0, pageSize = 'a4', onPageSizeChange, updateActiveFormats, handleImageUpload, insertImage, convertToInlineCode }) {
-  // NOTE: document.execCommand is deprecated and may not work in all browsers. Consider migrating to a modern rich text editor library.
+function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFormats = [], clearFormatting, pages = [], currentPageIndex = 0, pageSize = 'a4', onPageSizeChange, updateActiveFormats, handleImageUpload, insertImage, convertToInlineCode, columns = 1, onChangeColumns}) {
+// NOTE: document.execCommand is deprecated and may not work in all browsers. Consider migrating to a modern rich text editor library.
   const isActive = (cmd) => {
     const normalized = cmd.toLowerCase();
     return activeFormats.includes(normalized) || activeFormats.includes(`<${normalized}>`);
@@ -20,6 +20,11 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
       setTimeout(updateActiveFormats, 0);
     }
   };
+ 
+ const setCols = (n) => {
+   const safe = Math.max(1, Math.min(6, n));
+   if (typeof onChangeColumns === 'function') onChangeColumns(safe);
+ };
 
   return (
     <div className="floating-toolbar-container">
@@ -352,7 +357,29 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             ))}
           </select>
         </div>
-        
+        <div className="toolbar-divider"></div>
+
+        {/* Columns Group (1–6) */}
+        <div className="toolbar-group columns-inline">
+          <div className="columns-stepper">
+            <button onMouseDown={(e)=>{e.preventDefault(); onChangeColumns(1)}}>1×</button>
+            <button onMouseDown={(e)=>{e.preventDefault(); onChangeColumns(2)}}>2×</button>
+            <button onMouseDown={(e)=>{e.preventDefault(); onChangeColumns(3)}}>3×</button>
+          </div>
+
+          <label className="columns-range" title="Número de columnas">
+            <span>Cols</span>
+            <input
+              type="range"
+              min="1"
+              max="6"
+              value={columns}
+              onChange={(e)=>onChangeColumns(Number(e.target.value))}
+            />
+            <span className="columns-value">{columns}</span>
+          </label>
+        </div>
+
       </div>
     </div>
   );
