@@ -262,8 +262,13 @@
 }
 
 /* Dark mode overrides */
-[data-theme="dark"] .editor-page * {
+/*[data-theme="dark"] .editor-page * {
   color: var(--text-primary) !important;
+} */
+
+/* Dark mode overrides */
+[data-theme="dark"] .editor-page {
+  color: #202124;
 }
 
 [data-theme="dark"] .editor-button:not(.active),
