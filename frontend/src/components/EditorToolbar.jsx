@@ -1,9 +1,7 @@
 import React from 'react';
 import { getPageSizeOptions } from '../utils/pageSizes';
-// import './LatexRenderer';
 
 function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFormats = [], clearFormatting, pages = [], currentPageIndex = 0, pageSize = 'a4', onPageSizeChange, updateActiveFormats, handleImageUpload, insertImage, convertToInlineCode, headerEnabled, footerEnabled, onToggleHeader, onToggleFooter, columns = 1, onChangeColumns}) {
-// NOTE: document.execCommand is deprecated and may not work in all browsers. Consider migrating to a modern rich text editor library.
   const isActive = (cmd) => {
     const normalized = cmd.toLowerCase();
     return activeFormats.includes(normalized) || activeFormats.includes(`<${normalized}>`);
@@ -13,7 +11,6 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
   const pageSizeOptions = getPageSizeOptions();
 
-  // Helper to call format and then update active formats if provided
   const handleFormat = (command, value = null) => {
     format(command, value);
     if (typeof updateActiveFormats === 'function') {
@@ -104,23 +101,6 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Advanced Text Formatting Group */}
-        {/* <div className="toolbar-group">
-          <button
-            onMouseDown={(e) => { e.preventDefault(); handleFormat('subscript'); }}
-            className={buttonClass('subscript')}
-            title="Subscript"
-          ><sub>A₂</sub></button>
-
-          <button
-            onMouseDown={(e) => { e.preventDefault(); handleFormat('superscript'); }}
-            className={buttonClass('superscript')}
-            title="Superscript"
-          ><sup>A²</sup></button>
-        </div> */}
-
-        <div className="toolbar-divider"></div>
-
         {/* Headings Group */}
         <div className="toolbar-group">
           {['h1', 'h2', 'h3'].map(h => (
@@ -174,20 +154,6 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             onClick={() => document.getElementById('image-upload').click()}
           >
             🖼️
-          </button>
-          
-          <button
-            type="button"
-            className="editor-button"
-            title="Insert Image from URL"
-            onClick={() => {
-              const url = prompt('Enter image URL:');
-              if (url && insertImage) {
-                insertImage(url);
-              }
-            }}
-          >
-            🔗
           </button>
         </div>
 

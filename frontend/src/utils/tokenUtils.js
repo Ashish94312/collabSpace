@@ -1,6 +1,3 @@
-// src/utils/tokenUtils.js
-
-// Check if token is expired or will expire soon
 export const isTokenExpired = (token, bufferMinutes = 5) => {
   if (!token) return true;
   
