@@ -1,5 +1,3 @@
-// server.js
-
 const path = require('path');
 const crypt = require('crypto');
 require('dotenv').config();
@@ -10,7 +8,6 @@ const bcrypt = require('bcrypt');
 const WebSocket = require('ws');
 const multer = require('multer');
 const fs = require('fs');
-// const { PrismaClient } = require('@prisma/client');
 const { PrismaClient } = require('@prisma/client'); 
 
 const { Client} = require('@elastic/elasticsearch');
@@ -20,27 +17,9 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 GOOGLE_CALLBACK_ROUTE=process.env.GOOGLE_REDIRECT_URI;
 
-// const fullContent = pages.map(p => p.content).join('\n\n');
 const esClient = new Client({
   node: 'http://localhost:9200',
 });
-
-// await esClient.index({
-//   index: 'documents',
-//   id: docId,
-//   body: {
-//     docId,
-//     userId: req.user.id,
-//     title: newTitle, // from req.body
-//     content: fullContent,
-//     updatedAt: new Date(),
-//   }
-// });
-
-// const pages = await prisma.page.findMany({
-//   where: { documentId: docId },
-//   orderBy: { pageIndex: 'asc' },
-// });
 
 const app = express();
 const prisma = new PrismaClient();
@@ -719,12 +698,6 @@ app.get('/api/test-upload', (req, res) => {
     requires: ["Authorization header", "image file in FormData"]
   });
 });
-
-
-
-// app.listen(PORT, () => {
-//   console.log(`🚀 Server running on http://localhost:${PORT}`);
-// });
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
