@@ -32,11 +32,10 @@ function EditorCanvas({
     '--footer-h': footerEnabled ? `${footerHeight}px` : '0px',
   };
 
-  // ← NUEVO: refs para header/footer (no controlados)
   const headerRef = useRef(null);
   const footerRef = useRef(null);
+  const pageContainerRef = useRef(null);
 
-  // ← Inicializa UNA SOLA VEZ el contenido (no en cada tecla)
   useEffect(() => {
     if (headerRef.current && headerHTML != null) {
       headerRef.current.innerHTML = headerHTML || '';
@@ -45,7 +44,7 @@ function EditorCanvas({
       footerRef.current.innerHTML = footerHTML || '';
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // no dependas de headerHTML/footerHTML para que no se reproyecte el caret
+  }, []);
 
   const handleHeaderInputLocal = () => {
     onHeaderInput?.(headerRef.current?.innerHTML || '');
@@ -71,9 +70,8 @@ function EditorCanvas({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        {/* TODA la página (header/body/footer) comparte el MISMO contenedor */}
         <div
-          ref={editorRef}
+          ref={pageContainerRef}
           className="editor-page editor-columns"
           data-page-size={pageSize}
           style={{
@@ -85,7 +83,7 @@ function EditorCanvas({
         >
           {headerEnabled && (
             <div
-              className="page-header"     // ← antes era page-header-band
+              className="page-header"
               ref={headerRef}
               contentEditable
               suppressContentEditableWarning
@@ -111,7 +109,7 @@ function EditorCanvas({
 
           {footerEnabled && (
             <div
-              className="page-footer"     // ← antes era page-footer-band
+              className="page-footer"
               ref={footerRef}
               contentEditable
               suppressContentEditableWarning
@@ -152,8 +150,6 @@ function useEditor(docId) {
   const [columns, setColumns] = useState(1); 
   const editorRef = useRef(null);
   const socketRef = useRef(null);
-
-  // WebSocket setup
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token || !docId) return;
@@ -216,7 +212,6 @@ function useEditor(docId) {
     fetchDoc();
   }, [docId]);
 
-  // Debounced autosave
   const autoSavePage = useCallback(
     debounce(async (pageIndex, content) => {
       const token = localStorage.getItem('token');
@@ -273,10 +268,8 @@ function useEditor(docId) {
       return updated;
     });
 
-    // Auto-save the page
     autoSavePage(currentPageIndex, html);
 
-    // Update history for undo/redo
     setHistory(prev => {
       const newHistory = [...prev];
       const pageHistory = newHistory[currentPageIndex] || [];
@@ -284,14 +277,12 @@ function useEditor(docId) {
       return newHistory;
     });
 
-    // Clear redo stack when new content is added
     setRedoStack(prev => {
       const newRedo = [...prev];
       newRedo[currentPageIndex] = [];
       return newRedo;
     });
 
-    // Send WebSocket update
     sendWebSocketUpdate(html);
   }, [currentPageIndex, autoSavePage, sendWebSocketUpdate]);
 
@@ -346,15 +337,12 @@ function useEditor(docId) {
       return;
     }
 
-    // Prevent deleting the last page if it's the only page
     if (pages.length <= 1) {
       alert('Cannot delete the last page. A document must have at least one page.');
       return;
     }
   
     try {
-      console.log(`🗑️ Attempting to delete page ${indexToDelete} from document ${docId}`);
-      
       const res = await fetch(`http://localhost:3000/api/documents/${docId}/pages/${indexToDelete}`, {
         method: 'DELETE',
         headers: {
@@ -369,17 +357,12 @@ function useEditor(docId) {
         return;
       }
   
-      console.log('✅ Server confirmed page deletion');
-  
-      // Remove the page from local state
       setPages(prev => {
         const updated = [...prev];
         updated.splice(indexToDelete, 1);
-        console.log(`📄 Updated local pages array, removed page ${indexToDelete}`);
         return updated;
       });
   
-      // Update currentPageIndex
       setCurrentPageIndex(prev => {
         let newIndex = prev;
         if (indexToDelete < prev) {
@@ -389,27 +372,21 @@ function useEditor(docId) {
         } else if (indexToDelete === prev && prev === 0) {
           newIndex = 0;
         }
-        console.log(`📄 Updated current page index from ${prev} to ${newIndex}`);
         return newIndex;
       });
   
-      // Optional: notify others via WebSocket
       if (socketRef.current?.readyState === WebSocket.OPEN) {
         socketRef.current.send(JSON.stringify({
           type: 'delete-page',
           pageIndex: indexToDelete,
         }));
-        console.log('📡 WebSocket notification sent');
       }
-  
-      console.log('✅ Page deleted successfully');
     } catch (err) {
       console.error('❌ Error deleting page:', err);
       alert(`Error deleting page: ${err.message}`);
     }
   };
 
-  // Image upload functionality
   const insertImage = (imageUrl, altText = 'Image') => {
     if (!editorRef.current) return;
 
@@ -419,35 +396,25 @@ function useEditor(docId) {
     img.style.maxWidth = '100%';
     img.style.height = 'auto';
     img.style.display = 'block';
-    img.style.margin = '8px 0'; // Reduced margin
+    img.style.margin = '8px 0';
     img.style.cursor = 'pointer';
     img.className = 'resizable-image';
 
-    // 🎓 LEARNING: Image Interaction Handling
-    // We need to handle both selection and dragging
     let dragStartTime = 0;
     
     img.addEventListener('mousedown', (e) => {
-      // 🎓 LEARNING: Prevent Default
-      // Prevent text selection while dragging
       e.preventDefault();
       e.stopPropagation();
       
-      // 🎓 LEARNING: Track Drag Start
-      // Remember when we started
       dragStartTime = Date.now();
       img.dataset.hasDragged = 'false';
       
-      // 🎓 LEARNING: Start Drag Operation
-      // Only start dragging if clicking on the image itself, not on handles
       if (!e.target.classList.contains('resize-handle')) {
         startDrag(img, e);
       }
     });
 
     img.addEventListener('click', (e) => {
-      // 🎓 LEARNING: Distinguish Between Click and Drag
-      // Only select if it's a quick click (not a drag)
       const clickDuration = Date.now() - dragStartTime;
       const hasDragged = img.dataset.hasDragged === 'true';
       if (clickDuration < 200 && !hasDragged) {
@@ -460,75 +427,45 @@ function useEditor(docId) {
     if (selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
       
-      // 🎓 LEARNING: Smart Image Insertion
-      // Insert image at cursor position
       range.deleteContents();
       range.insertNode(img);
       range.collapse(false);
       
-      // 🎓 LEARNING: Add Space After Image
-      // Add a small space after the image for better readability
-      const space = document.createTextNode('\u00A0'); // Non-breaking space
+      const space = document.createTextNode('\u00A0');
       range.insertNode(space);
       range.collapse(false);
     } else {
-      // 🎓 LEARNING: Append to End
-      // If no selection, append to the end of the editor
       editorRef.current.appendChild(img);
       
-      // Add a small space after
       const space = document.createTextNode('\u00A0');
       editorRef.current.appendChild(space);
     }
-
-    // 🎓 LEARNING: Smart Spacing
-    // The image is now inserted with proper spacing using non-breaking spaces
-    // This provides better control over spacing without excessive line breaks
 
     saveEditorState();
     editorRef.current.focus();
   };
 
-  // 🎓 LEARNING: Image Selection Function
-  // This function handles selecting an image and showing resize controls
   const selectImage = (img) => {
-    // 🎓 LEARNING: DOM Querying
-    // querySelectorAll finds all elements matching the selector
-    // We remove selection from other images first
     const allImages = editorRef.current.querySelectorAll('.resizable-image');
     allImages.forEach(image => {
       image.classList.remove('selected');
     });
 
-    // 🎓 LEARNING: CSS Classes for State
-    // We use CSS classes to track which image is selected
-    // This is a common pattern in web development
     img.classList.add('selected');
     
-    // Create resize handles and toolbar
     createResizeHandles(img);
     createImageToolbar(img);
   };
 
-  // 🎓 LEARNING: Dynamic UI Creation
-  // This function creates a toolbar that appears above the selected image
   const createImageToolbar = (img) => {
-    // 🎓 LEARNING: DOM Cleanup
-    // Always remove existing elements before creating new ones
-    // This prevents duplicate toolbars
     const existingToolbar = editorRef.current.querySelector('.image-toolbar');
     if (existingToolbar) {
       existingToolbar.remove();
     }
 
-    // 🎓 LEARNING: Creating DOM Elements
-    // document.createElement() creates new HTML elements
     const toolbar = document.createElement('div');
     toolbar.className = 'image-toolbar';
     
-    // 🎓 LEARNING: Inline Styles vs CSS Classes
-    // For dynamic positioning, we use inline styles
-    // For consistent styling, we use CSS classes
     toolbar.style.cssText = `
       position: absolute;
       background: white;
@@ -541,17 +478,12 @@ function useEditor(docId) {
       gap: 4px;
     `;
 
-    // 🎓 LEARNING: Element Positioning
-    // getBoundingClientRect() gives us the exact position and size of an element
     const rect = img.getBoundingClientRect();
     const editorRect = editorRef.current.getBoundingClientRect();
     
-    // Position toolbar above the image
     toolbar.style.left = `${rect.left - editorRect.left}px`;
     toolbar.style.top = `${rect.top - editorRect.top - 50}px`;
 
-    // 🎓 LEARNING: Button Configuration
-    // We define button properties in an array for easy management
     const buttons = [
       { text: '🗑️', title: 'Delete Image', action: () => deleteImage(img) },
       { text: '↔️', title: 'Reset Size', action: () => resetImageSize(img) },
@@ -559,8 +491,6 @@ function useEditor(docId) {
       { text: '🖱️', title: 'Drag to Move', action: () => {} }
     ];
 
-    // 🎓 LEARNING: Dynamic Button Creation
-    // We loop through the button config to create each button
     buttons.forEach(btn => {
       const button = document.createElement('button');
       button.textContent = btn.text;
@@ -575,8 +505,6 @@ function useEditor(docId) {
         transition: all 0.2s ease;
       `;
       
-      // 🎓 LEARNING: Event Handlers
-      // We add mouse events for hover effects
       button.onmouseover = () => {
         button.style.background = '#e2e8f0';
       };
@@ -591,34 +519,21 @@ function useEditor(docId) {
     editorRef.current.appendChild(toolbar);
   };
 
-  // 🎓 LEARNING: Update Toolbar Position
-  // This function updates the toolbar position when the image moves
   const updateImageToolbarPosition = (img) => {
     const toolbar = editorRef.current.querySelector('.image-toolbar');
     if (toolbar) {
-      // 🎓 LEARNING: Recalculate Position
-      // Get the current position of the image
       const rect = img.getBoundingClientRect();
       const editorRect = editorRef.current.getBoundingClientRect();
       
-      // 🎓 LEARNING: Update Toolbar Position
-      // Position toolbar above the image
       toolbar.style.left = `${rect.left - editorRect.left}px`;
       toolbar.style.top = `${rect.top - editorRect.top - 50}px`;
     }
   };
-
-  // 🎓 LEARNING: Image Action Functions
-  // These functions handle different actions on the selected image
   
   const deleteImage = (img) => {
-    // 🎓 LEARNING: User Confirmation
-    // Always ask for confirmation before deleting
     if (window.confirm('Are you sure you want to delete this image?')) {
       img.remove();
       
-      // 🎓 LEARNING: Cleanup
-      // Always clean up related UI elements
       const toolbar = editorRef.current.querySelector('.image-toolbar');
       if (toolbar) toolbar.remove();
       
@@ -630,22 +545,16 @@ function useEditor(docId) {
   };
 
   const resetImageSize = (img) => {
-    // 🎓 LEARNING: Resetting Styles
-    // Clear all custom size styles to return to original size
     img.style.width = '';
     img.style.height = '';
     img.style.left = '';
     img.style.top = '';
     
-    // Recreate handles for the new size
     createResizeHandles(img);
     saveEditorState();
   };
 
   const setImageSize = (img) => {
-    // 🎓 LEARNING: User Input
-    // prompt() is a simple way to get user input
-    // In production, you'd use a modal or form
     const width = window.prompt('Enter width (px):', img.offsetWidth);
     const height = window.prompt('Enter height (px):', img.offsetHeight);
     
@@ -657,25 +566,16 @@ function useEditor(docId) {
     }
   };
 
-  // 🎓 LEARNING: Resize Handles Creation
-  // This is the most complex part - creating the corner handles for resizing
   const createResizeHandles = (img) => {
-    // 🎓 LEARNING: DOM Cleanup
-    // Remove existing handles first
     const existingHandles = editorRef.current.querySelectorAll('.resize-handle');
     existingHandles.forEach(handle => handle.remove());
 
-    // 🎓 LEARNING: Handle Positions
-    // We create 4 handles: northwest, northeast, southwest, southeast
     const handles = ['nw', 'ne', 'sw', 'se'];
     
     handles.forEach(position => {
       const handle = document.createElement('div');
       handle.className = `resize-handle resize-handle-${position}`;
       
-      // 🎓 LEARNING: Absolute Positioning
-      // position: absolute removes the element from normal document flow
-      // We position it relative to the editor container
       handle.style.position = 'absolute';
       handle.style.width = '8px';
       handle.style.height = '8px';
@@ -683,13 +583,9 @@ function useEditor(docId) {
       handle.style.border = '1px solid white';
       handle.style.borderRadius = '50%';
       
-      // 🎓 LEARNING: Cursor Styles
-      // Different cursor styles for different resize directions
       handle.style.cursor = `${position === 'nw' || position === 'se' ? 'nw-resize' : 'ne-resize'}`;
       handle.style.zIndex = '1000';
       
-      // 🎓 LEARNING: Positioning Logic
-      // Calculate where each handle should be positioned
       const rect = img.getBoundingClientRect();
       const editorRect = editorRef.current.getBoundingClientRect();
       
@@ -716,8 +612,6 @@ function useEditor(docId) {
       handle.style.left = `${left}px`;
       handle.style.top = `${top}px`;
       
-      // 🎓 LEARNING: Event Delegation
-      // We add mousedown event to start the resize operation
       handle.addEventListener('mousedown', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -728,11 +622,7 @@ function useEditor(docId) {
     });
   };
 
-  // 🎓 LEARNING: The Resize Function
-  // This is the heart of the resize functionality
   const startResize = (img, handle, e) => {
-    // 🎓 LEARNING: Capturing Initial State
-    // We need to remember where we started to calculate the change
     const startX = e.clientX;
     const startY = e.clientY;
     const startWidth = img.offsetWidth;
@@ -740,40 +630,34 @@ function useEditor(docId) {
     const startLeft = img.offsetLeft;
     const startTop = img.offsetTop;
     
-    // 🎓 LEARNING: Mouse Move Handler
-    // This function runs every time the mouse moves
     const handleMouseMove = (e) => {
-      // 🎓 LEARNING: Delta Calculation
-      // Calculate how far the mouse has moved from the start
       const deltaX = e.clientX - startX;
       const deltaY = e.clientY - startY;
       
       let newWidth, newHeight;
       
-      // 🎓 LEARNING: Handle-Specific Logic
-      // Each corner handle behaves differently
       switch(handle) {
-        case 'se': // Southeast - resize from bottom-right
+        case 'se':
           newWidth = Math.max(50, startWidth + deltaX);
           newHeight = Math.max(50, startHeight + deltaY);
           img.style.width = `${newWidth}px`;
           img.style.height = `${newHeight}px`;
           break;
-        case 'sw': // Southwest - resize from bottom-left
+        case 'sw':
           newWidth = Math.max(50, startWidth - deltaX);
           newHeight = Math.max(50, startHeight + deltaY);
           img.style.width = `${newWidth}px`;
           img.style.height = `${newHeight}px`;
           img.style.left = `${startLeft + startWidth - newWidth}px`;
           break;
-        case 'ne': // Northeast - resize from top-right
+        case 'ne':
           newWidth = Math.max(50, startWidth + deltaX);
           newHeight = Math.max(50, startHeight - deltaY);
           img.style.width = `${newWidth}px`;
           img.style.height = `${newHeight}px`;
           img.style.top = `${startTop + startHeight - newHeight}px`;
           break;
-        case 'nw': // Northwest - resize from top-left
+        case 'nw':
           newWidth = Math.max(50, startWidth - deltaX);
           newHeight = Math.max(50, startHeight - deltaY);
           img.style.width = `${newWidth}px`;
@@ -783,143 +667,74 @@ function useEditor(docId) {
           break;
       }
       
-      // 🎓 LEARNING: Real-time Updates
-      // Update handle positions as the image resizes
       createResizeHandles(img);
     };
     
-    // 🎓 LEARNING: Mouse Up Handler
-    // This function runs when the user stops dragging
     const handleMouseUp = () => {
-      // 🎓 LEARNING: Event Cleanup
-      // Always remove event listeners when done
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
       saveEditorState();
     };
     
-    // 🎓 LEARNING: Global Event Listeners
-    // We add listeners to document, not just the handle
-    // This ensures we catch mouse events even if the cursor moves outside the handle
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  // 🎓 LEARNING: Image Dragging Function
-  // This function allows you to drag images around the document
   const startDrag = (img, e) => {
-    // 🎓 LEARNING: Prevent Default Behavior
-    // Prevent text selection while dragging
     e.preventDefault();
     e.stopPropagation();
 
-    // 🎓 LEARNING: Visual Feedback
-    // Add dragging class for visual feedback
     img.classList.add('dragging');
 
-    // 🎓 LEARNING: Capture Initial State
-    // Remember where the mouse started relative to the image
     const startX = e.clientX;
     const startY = e.clientY;
     const startLeft = img.offsetLeft;
     const startTop = img.offsetTop;
 
-    // 🎓 LEARNING: Mouse Move Handler for Dragging
     const handleMouseMove = (e) => {
-      // 🎓 LEARNING: Calculate Movement
-      // Calculate how far the mouse has moved
       const deltaX = e.clientX - startX;
       const deltaY = e.clientY - startY;
 
-      // 🎓 LEARNING: Check if Actually Dragging
-      // Only move if we've moved more than a few pixels
       if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
-        // Set the drag flag to prevent click selection
         img.dataset.hasDragged = 'true';
         
-        // 🎓 LEARNING: Update Position
-        // Move the image by the same amount as the mouse
-        img.style.position = 'relative'; // Ensure positioning works
+        img.style.position = 'relative';
         img.style.left = `${startLeft + deltaX}px`;
         img.style.top = `${startTop + deltaY}px`;
 
-        // 🎓 LEARNING: Real-time Updates
-        // Update handles and toolbar position as image moves
         createResizeHandles(img);
         updateImageToolbarPosition(img);
       }
     };
 
-    // 🎓 LEARNING: Mouse Up Handler
     const handleMouseUp = () => {
-      // 🎓 LEARNING: Visual Feedback Cleanup
-      // Remove dragging class
       img.classList.remove('dragging');
       
-      // 🎓 LEARNING: Event Cleanup
-      // Always remove event listeners when done
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
       
-      // 🎓 LEARNING: Save State
-      // Save the new position to the document state
       saveEditorState();
     };
 
-    // 🎓 LEARNING: Global Event Listeners
-    // Add listeners to document for smooth dragging
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  // 🎓 LEARNING: Click Outside to Deselect
-  // This function handles deselecting images when clicking elsewhere
-  // const handleEditorClick = (e) => {
-  //   // 🎓 LEARNING: Event Target Checking
-  //   // Check if the click was on an image, handle, or toolbar
-  //   if (!e.target.classList.contains('resizable-image') && 
-  //       !e.target.classList.contains('resize-handle') &&
-  //       !e.target.closest('.image-toolbar')) {
-      
-  //     // 🎓 LEARNING: Bulk DOM Operations
-  //     // Remove selection from all images
-  //     const allImages = editorRef.current.querySelectorAll('.resizable-image');
-  //     allImages.forEach(image => {
-  //       image.classList.remove('selected');
-  //     });
-      
-  //     // 🎓 LEARNING: Cleanup UI Elements
-  //     // Remove all resize handles
-  //     const handles = editorRef.current.querySelectorAll('.resize-handle');
-  //     handles.forEach(handle => handle.remove());
-      
-  //     // Remove toolbar
-  //     const toolbar = editorRef.current.querySelector('.image-toolbar');
-  //     if (toolbar) toolbar.remove();
-  //   }
-  // };
-
   const handleEditorClick = (e) => {
-   
     let targetElement = e.target;
-    // Traverse up the DOM tree to find an anchor tag if the click wasn't directly on it
     while (targetElement != null && targetElement.tagName !== 'A') {
         targetElement = targetElement.parentElement;
     }
 
-    // If an anchor tag was found and it has an href
     if (targetElement && targetElement.tagName === 'A' && targetElement.hasAttribute('href')) {
         const href = targetElement.getAttribute('href');
-        // Basic check if it looks like a valid URL before opening
         if (href && (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('/'))) {
-            e.preventDefault(); // Prevent potential editor interference
-            window.open(href, '_blank', 'noopener,noreferrer'); // Open link in a new tab safely
-            return; // Stop further processing (don't deselect images if clicking a link)
+            e.preventDefault();
+            window.open(href, '_blank', 'noopener,noreferrer');
+            return;
         }
     }
     
-    // Existing logic for deselecting images, etc.
-    // Check if the click was *outside* an image, handle, or toolbar
     if (!e.target.closest('.resizable-image') &&
         !e.target.closest('.resize-handle') &&
         !e.target.closest('.image-toolbar')) {
@@ -956,12 +771,8 @@ function useEditor(docId) {
     }
 
     try {
-      // 🎓 LEARNING: User Feedback
-      // Show loading message to user
       console.log('📤 Uploading image...');
       
-      // 🎓 LEARNING: Proper Image Upload
-      // Upload image to server and get a URL back
       const imageUrl = await uploadImageToServer(file);
       
       console.log('✅ Image uploaded successfully:', imageUrl);
@@ -972,16 +783,12 @@ function useEditor(docId) {
     }
   };
 
-  // 🎓 LEARNING: Server Image Upload Function
-  // This function uploads the image to the server and returns a URL
   const uploadImageToServer = async (file) => {
     const token = localStorage.getItem('token');
     if (!token) {
       throw new Error('No authentication token');
     }
 
-    // 🎓 LEARNING: FormData for File Upload
-    // FormData is used to send files to the server
     const formData = new FormData();
     formData.append('image', file);
     formData.append('documentId', docId);
@@ -990,28 +797,23 @@ function useEditor(docId) {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
-        // 🎓 LEARNING: Don't set Content-Type for FormData
-        // The browser will set it automatically with the boundary
       },
       body: formData
     });
 
     if (!response.ok) {
-      // 🎓 LEARNING: Better Error Handling
-      // Try to parse JSON error, but handle HTML responses too
       let errorMessage = 'Failed to upload image';
       try {
         const error = await response.json();
         errorMessage = error.error || error.message || errorMessage;
       } catch (parseError) {
-        // If response is not JSON (like HTML error page), use status text
         errorMessage = `Server error: ${response.status} ${response.statusText}`;
       }
       throw new Error(errorMessage);
     }
 
     const data = await response.json();
-    return data.imageUrl; // Server returns the image URL
+    return data.imageUrl;
   };
 
   const handlePaste = (e) => {
@@ -1022,8 +824,6 @@ function useEditor(docId) {
       if (item.type.startsWith('image/')) {
         e.preventDefault();
         const file = item.getAsFile();
-        // 🎓 LEARNING: Handle Pasted Images
-        // Upload pasted images to server just like uploaded files
         handleImageUpload(file);
         return;
       }
@@ -1058,7 +858,6 @@ function useEditor(docId) {
   
 
 
-  // Utility: Split a span at a given offset in a text node (handles edge cases)
   function splitSpanAtOffset(textNode, offset) {
     if (!textNode || textNode.nodeType !== 3 || !textNode.parentNode || textNode.parentNode.tagName !== 'SPAN') return;
     const span = textNode.parentNode;
@@ -1073,7 +872,6 @@ function useEditor(docId) {
     span.parentNode.removeChild(textNode);
   }
 
-  // Utility: Split spans at selection boundaries (handles multi-node selections)
   function splitSpansAtRange(range) {
     const { startContainer, startOffset, endContainer, endOffset } = range;
     if (startContainer.nodeType === 3 && startContainer.parentNode.tagName === 'SPAN') {
@@ -1087,7 +885,6 @@ function useEditor(docId) {
 
   
 
-  // Utility: Normalize spans in a container (merge, unwrap, remove empty)
   function normalizeSpans(container) {
     if (!container) return;
     let node = container.firstChild;
@@ -1113,7 +910,6 @@ function useEditor(docId) {
     }
   }
 
-  // Utility: Save editor state after DOM changes
   function saveEditorState() {
     if (editorRef.current) {
       const html = editorRef.current.innerHTML;
@@ -1130,7 +926,6 @@ function useEditor(docId) {
     }
   }
 
-  // Utility: Check if execCommand works for a command
   function canUseExecCommand(command) {
     try {
       document.execCommand(command, false, '#000000');
@@ -1147,7 +942,6 @@ function useEditor(docId) {
       return;
     }
     const range = selection.getRangeAt(0);
-    // Hybrid: Try execCommand for color/highlight first
     if ((command === 'foreColor' || command === 'hiliteColor') && value && canUseExecCommand(command)) {
       document.execCommand(command, false, value);
       saveEditorState();
@@ -1348,107 +1142,54 @@ function useEditor(docId) {
     }
   }, [addPage]);
 
-  // useEffect(() => {
-  //   const handleKeyDown = (e) => {
-  //     const isMac = navigator.platform.toUpperCase().includes('MAC');
-  //     const isCtrl = isMac ? e.metaKey : e.ctrlKey;
-
-  //     if (isCtrl && e.key.toLowerCase() === 'z') {
-  //       e.preventDefault();
-  //       e.shiftKey ? redo() : undo();
-  //     }
-  //     if (isCtrl && e.key.toLowerCase() === 'k') {
-  //       e.preventDefault(); // Prevent doefault browser behavior 
-
-  //       const url = window.prompt('Enter URL: (include https://)');
-  //       if (url) { // If the user entered a URL and didn't cancel
-  //           const selection = window.getSelection();
-  //           // Check if the selection is actually within the editor
-  //           if (selection && editorRef.current?.contains(selection.anchorNode)) {
-                 
-  //               if (!selection.isCollapsed) {
-  //                   document.execCommand('createLink', false, url);
-  //               }
-                
-  //               else {
-  //                   // Use insertHTML which is generally more reliable for inserting new elements
-  //                   document.execCommand('insertHTML', false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
-  //               }
-                 
-  //               if (editorRef.current) {
-  //                   handleInput({ target: editorRef.current });
-  //               }
-  //           }
-  //       }
-  //       return; 
-  //   }
-    
-  //   };
-  //   document.addEventListener('keydown', handleKeyDown);
-  //   return () => document.removeEventListener('keydown', handleKeyDown);
-  // }, [undo, redo, handleInput, editorRef]);
-
   useEffect(() => {
-    // eslint-disable-next-line
     const handleKeyDown = (e) => {
       const isMac = navigator.platform.toUpperCase().includes('MAC');
       const isCtrl = isMac ? e.metaKey : e.ctrlKey;
 
-      // --- CTRL + Z / CTRL + SHIFT + Z (Undo/Redo) ---
       if (isCtrl && e.key.toLowerCase() === 'z') {
         e.preventDefault();
         e.shiftKey ? redo() : undo();
-        // Do not return here, allow code to continue to Ctrl+K check
       }
 
-      // --- CTRL + K (Link Insertion) ---
       if (isCtrl && e.key.toLowerCase() === 'k') {
-        e.preventDefault(); // Prevent default browser behavior (e.g., opening search)
+        e.preventDefault();
 
         const url = window.prompt('Enter URL: (include https://)');
         if (url) { 
             const selection = window.getSelection();
-            // Check if the selection is actually within the editor
             if (selection && editorRef.current?.contains(selection.anchorNode)) {
                 
-                // 1. If text is selected (not collapsed), use createLink
                 if (!selection.isCollapsed) {
                     document.execCommand('createLink', false, url);
                 }
-                
-                // 2. If no text is selected, insert the URL as a link
                 else {
                     document.execCommand('insertHTML', false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
                 }
                 
-                // 3. Crucial: Manually trigger handleInput to save state and sync via WebSocket
                 if (editorRef.current) {
                     handleInput({ target: editorRef.current });
                 }
             }
         }
-        return; // Indicate the shortcut was handled
+        return;
       }
     };
     
-    // 🎓 LEARNING: Global Event Listener Registration
-    // We attach the function to the entire document
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-}, [undo, redo, handleInput, editorRef]); // <-- FIXED DEPENDENCY ARRAY
+}, [undo, redo, handleInput, editorRef]);
 
   useEffect(() => {
     if (editorRef.current && pages[currentPageIndex]?.content !== editorRef.current.innerHTML) {
       editorRef.current.innerHTML = pages[currentPageIndex]?.content || '';
       
-      // Apply syntax highlighting after content is loaded
       setTimeout(() => {
         const codeBlocks = editorRef.current?.querySelectorAll('pre code');
         if (codeBlocks) {
           codeBlocks.forEach(codeBlock => {
             const language = codeBlock.className.replace('language-', '');
             if (language) {
-              // Trigger a custom event for syntax highlighting
               const event = new CustomEvent('applySyntaxHighlighting', { 
                 detail: { language, codeBlock } 
               });

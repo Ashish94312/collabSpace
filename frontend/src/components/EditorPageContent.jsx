@@ -1,5 +1,5 @@
 import React from 'react';
-// import './Editor.css'
+
 function EditorPageContent({ editorRef, handleInput, handleFocus, handleBlur, handleMouseUp, handleKeyUp }) {
   return (
     <div
