@@ -190,7 +190,6 @@ function useEditor(docId) {
     return () => ws.close();
   }, [docId, currentPageIndex]);
 
-  // Load initial document content
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token || !docId) return;
@@ -290,6 +289,21 @@ function useEditor(docId) {
     const token = localStorage.getItem('token');
     if (!token) return;
 
+    if (editorRef.current) {
+      const currentHtml = editorRef.current.innerHTML;
+      setPages(prev => {
+        const updated = [...prev];
+        if (updated[currentPageIndex]) {
+          updated[currentPageIndex] = {
+            ...updated[currentPageIndex],
+            content: currentHtml
+          };
+        }
+        return updated;
+      });
+      autoSavePage(currentPageIndex, currentHtml);
+    }
+
     try {
       const res = await fetch(`http://localhost:3000/api/documents/${docId}/pages`, {
         method: 'POST',
@@ -301,8 +315,18 @@ function useEditor(docId) {
       });
 
       const data = await res.json();
-      setPages(prev => [...prev, data]);
-      setCurrentPageIndex(prev => prev + 1);
+      
+      let newPageIndex = 0;
+      setPages(prev => {
+        newPageIndex = prev.length;
+        return [...prev, data];
+      });
+      
+      setCurrentPageIndex(newPageIndex);
+
+      if (editorRef.current) {
+        editorRef.current.innerHTML = data.content || '<p>New Page</p>';
+      }
 
       if (socketRef.current?.readyState === WebSocket.OPEN) {
         socketRef.current.send(JSON.stringify({
@@ -316,7 +340,11 @@ function useEditor(docId) {
   };
 
   const switchPage = (index) => {
+    if (!editorRef.current) return;
+    
     const html = editorRef.current.innerHTML;
+    let newPageContent = '';
+    
     setPages(prev => {
       const updated = [...prev];
       if (updated[currentPageIndex]) {
@@ -325,9 +353,17 @@ function useEditor(docId) {
           content: html
         };
       }
+      newPageContent = updated[index]?.content || '';
       return updated;
     });
+    
+    autoSavePage(currentPageIndex, html);
+    
     setCurrentPageIndex(index);
+    
+    if (editorRef.current && newPageContent) {
+      editorRef.current.innerHTML = newPageContent;
+    }
   };
 
   const deletePage = async (indexToDelete) => {
@@ -449,6 +485,12 @@ function useEditor(docId) {
     const allImages = editorRef.current.querySelectorAll('.resizable-image');
     allImages.forEach(image => {
       image.classList.remove('selected');
+      if (image._handleUpdateListeners) {
+        image._handleUpdateListeners.forEach(cleanup => cleanup());
+        image._handleUpdateListeners = null;
+      }
+      const handles = editorRef.current.querySelectorAll('.resize-handle');
+      handles.forEach(handle => handle.remove());
     });
 
     img.classList.add('selected');
@@ -532,6 +574,11 @@ function useEditor(docId) {
   
   const deleteImage = (img) => {
     if (window.confirm('Are you sure you want to delete this image?')) {
+      if (img._handleUpdateListeners) {
+        img._handleUpdateListeners.forEach(cleanup => cleanup());
+        img._handleUpdateListeners = null;
+      }
+      
       img.remove();
       
       const toolbar = editorRef.current.querySelector('.image-toolbar');
@@ -549,6 +596,8 @@ function useEditor(docId) {
     img.style.height = '';
     img.style.left = '';
     img.style.top = '';
+    img.style.position = '';
+    img.classList.remove('positioned');
     
     createResizeHandles(img);
     saveEditorState();
@@ -567,50 +616,84 @@ function useEditor(docId) {
   };
 
   const createResizeHandles = (img) => {
+    if (!editorRef.current || !img) return;
+    
     const existingHandles = editorRef.current.querySelectorAll('.resize-handle');
     existingHandles.forEach(handle => handle.remove());
 
     const handles = ['nw', 'ne', 'sw', 'se'];
     
+    const editorContainer = editorRef.current;
+    const computedStyle = window.getComputedStyle(editorContainer);
+    if (computedStyle.position === 'static') {
+      editorContainer.style.position = 'relative';
+    }
+    
+    const imgRect = img.getBoundingClientRect();
+    const editorRect = editorContainer.getBoundingClientRect();
+    
+    const imgLeft = imgRect.left - editorRect.left;
+    const imgTop = imgRect.top - editorRect.top;
+    const imgWidth = imgRect.width;
+    const imgHeight = imgRect.height;
+    
+    const handleSize = 8;
+    const handleOffset = handleSize / 2;
+    
+    const minLeft = -handleOffset;
+    const minTop = -handleOffset;
+    const maxLeft = editorRect.width - handleOffset;
+    const maxTop = editorRect.height - handleOffset;
+    
     handles.forEach(position => {
       const handle = document.createElement('div');
       handle.className = `resize-handle resize-handle-${position}`;
       
-      handle.style.position = 'absolute';
-      handle.style.width = '8px';
-      handle.style.height = '8px';
-      handle.style.backgroundColor = '#3b82f6';
-      handle.style.border = '1px solid white';
-      handle.style.borderRadius = '50%';
-      
-      handle.style.cursor = `${position === 'nw' || position === 'se' ? 'nw-resize' : 'ne-resize'}`;
-      handle.style.zIndex = '1000';
-      
-      const rect = img.getBoundingClientRect();
-      const editorRect = editorRef.current.getBoundingClientRect();
+      handle.style.cssText = `
+        position: absolute;
+        width: ${handleSize}px;
+        height: ${handleSize}px;
+        background-color: #3b82f6;
+        border: 1px solid white;
+        border-radius: 50%;
+        box-sizing: border-box;
+        z-index: 1000;
+        pointer-events: all;
+        cursor: ${position === 'nw' ? 'nw-resize' : position === 'ne' ? 'ne-resize' : position === 'sw' ? 'sw-resize' : 'se-resize'};
+        transition: transform 0.1s ease;
+      `;
       
       let left, top;
       switch(position) {
         case 'nw': 
-          left = rect.left - editorRect.left - 4; 
-          top = rect.top - editorRect.top - 4; 
+          left = imgLeft - handleOffset; 
+          top = imgTop - handleOffset; 
           break;
         case 'ne': 
-          left = rect.right - editorRect.left - 4; 
-          top = rect.top - editorRect.top - 4; 
+          left = imgLeft + imgWidth - handleOffset; 
+          top = imgTop - handleOffset; 
           break;
         case 'sw': 
-          left = rect.left - editorRect.left - 4; 
-          top = rect.bottom - editorRect.top - 4; 
+          left = imgLeft - handleOffset; 
+          top = imgTop + imgHeight - handleOffset; 
           break;
         case 'se': 
-          left = rect.right - editorRect.left - 4; 
-          top = rect.bottom - editorRect.top - 4; 
+          left = imgLeft + imgWidth - handleOffset; 
+          top = imgTop + imgHeight - handleOffset; 
           break;
       }
       
       handle.style.left = `${left}px`;
       handle.style.top = `${top}px`;
+      
+      handle.addEventListener('mouseenter', () => {
+        handle.style.transform = 'scale(1.3)';
+        handle.style.backgroundColor = '#2563eb';
+      });
+      handle.addEventListener('mouseleave', () => {
+        handle.style.transform = 'scale(1)';
+        handle.style.backgroundColor = '#3b82f6';
+      });
       
       handle.addEventListener('mousedown', (e) => {
         e.preventDefault();
@@ -618,23 +701,57 @@ function useEditor(docId) {
         startResize(img, position, e);
       });
       
-      editorRef.current.appendChild(handle);
+      editorContainer.appendChild(handle);
     });
+    
+    let scrollTimeout;
+    const updateHandlesOnScroll = () => {
+      if (img.classList.contains('selected') && editorRef.current && editorRef.current.contains(img)) {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          createResizeHandles(img);
+        }, 16);
+      }
+    };
+    
+    if (!img._handleUpdateListeners) {
+      img._handleUpdateListeners = [];
+      
+      const scrollHandler = () => updateHandlesOnScroll();
+      const resizeHandler = () => updateHandlesOnScroll();
+      
+      window.addEventListener('scroll', scrollHandler, { passive: true, capture: true });
+      window.addEventListener('resize', resizeHandler, { passive: true });
+      editorContainer.addEventListener('scroll', scrollHandler, { passive: true });
+      
+      img._handleUpdateListeners.push(
+        () => {
+          clearTimeout(scrollTimeout);
+          window.removeEventListener('scroll', scrollHandler, { capture: true });
+        },
+        () => window.removeEventListener('resize', resizeHandler),
+        () => editorContainer.removeEventListener('scroll', scrollHandler)
+      );
+    }
   };
 
   const startResize = (img, handle, e) => {
     const startX = e.clientX;
     const startY = e.clientY;
-    const startWidth = img.offsetWidth;
-    const startHeight = img.offsetHeight;
-    const startLeft = img.offsetLeft;
-    const startTop = img.offsetTop;
+    
+    const initialRect = img.getBoundingClientRect();
+    const startWidth = initialRect.width;
+    const startHeight = initialRect.height;
+    
+    const editorRect = editorRef.current.getBoundingClientRect();
+    const currentLeft = parseFloat(img.style.left) || (initialRect.left - editorRect.left);
+    const currentTop = parseFloat(img.style.top) || (initialRect.top - editorRect.top);
     
     const handleMouseMove = (e) => {
       const deltaX = e.clientX - startX;
       const deltaY = e.clientY - startY;
       
-      let newWidth, newHeight;
+      let newWidth, newHeight, newLeft, newTop;
       
       switch(handle) {
         case 'se':
@@ -646,28 +763,34 @@ function useEditor(docId) {
         case 'sw':
           newWidth = Math.max(50, startWidth - deltaX);
           newHeight = Math.max(50, startHeight + deltaY);
+          newLeft = currentLeft + startWidth - newWidth;
           img.style.width = `${newWidth}px`;
           img.style.height = `${newHeight}px`;
-          img.style.left = `${startLeft + startWidth - newWidth}px`;
+          img.style.left = `${newLeft}px`;
           break;
         case 'ne':
           newWidth = Math.max(50, startWidth + deltaX);
           newHeight = Math.max(50, startHeight - deltaY);
+          newTop = currentTop + startHeight - newHeight;
           img.style.width = `${newWidth}px`;
           img.style.height = `${newHeight}px`;
-          img.style.top = `${startTop + startHeight - newHeight}px`;
+          img.style.top = `${newTop}px`;
           break;
         case 'nw':
           newWidth = Math.max(50, startWidth - deltaX);
           newHeight = Math.max(50, startHeight - deltaY);
+          newLeft = currentLeft + startWidth - newWidth;
+          newTop = currentTop + startHeight - newHeight;
           img.style.width = `${newWidth}px`;
           img.style.height = `${newHeight}px`;
-          img.style.left = `${startLeft + startWidth - newWidth}px`;
-          img.style.top = `${startTop + startHeight - newHeight}px`;
+          img.style.left = `${newLeft}px`;
+          img.style.top = `${newTop}px`;
           break;
       }
       
-      createResizeHandles(img);
+      requestAnimationFrame(() => {
+        createResizeHandles(img);
+      });
     };
     
     const handleMouseUp = () => {
@@ -688,8 +811,14 @@ function useEditor(docId) {
 
     const startX = e.clientX;
     const startY = e.clientY;
-    const startLeft = img.offsetLeft;
-    const startTop = img.offsetTop;
+    
+    const initialRect = img.getBoundingClientRect();
+    const editorRect = editorRef.current.getBoundingClientRect();
+    const startLeft = initialRect.left - editorRect.left;
+    const startTop = initialRect.top - editorRect.top;
+    
+    const currentLeft = parseFloat(img.style.left) || startLeft;
+    const currentTop = parseFloat(img.style.top) || startTop;
 
     const handleMouseMove = (e) => {
       const deltaX = e.clientX - startX;
@@ -699,16 +828,39 @@ function useEditor(docId) {
         img.dataset.hasDragged = 'true';
         
         img.style.position = 'relative';
-        img.style.left = `${startLeft + deltaX}px`;
-        img.style.top = `${startTop + deltaY}px`;
+        img.style.left = `${currentLeft + deltaX}px`;
+        img.style.top = `${currentTop + deltaY}px`;
 
-        createResizeHandles(img);
-        updateImageToolbarPosition(img);
+        requestAnimationFrame(() => {
+          createResizeHandles(img);
+          updateImageToolbarPosition(img);
+        });
       }
     };
 
     const handleMouseUp = () => {
       img.classList.remove('dragging');
+      
+      if (img.dataset.hasDragged === 'true') {
+        img.classList.add('positioned');
+        const pageRect = editorRef.current.getBoundingClientRect();
+        const imgRect = img.getBoundingClientRect();
+        const currentLeft = parseFloat(img.style.left) || 0;
+        const currentTop = parseFloat(img.style.top) || 0;
+        
+        const maxLeft = pageRect.width - imgRect.width - 160;
+        const maxTop = pageRect.height - imgRect.height - 120;
+        
+        if (currentLeft < 0) img.style.left = '0px';
+        if (currentLeft > maxLeft) img.style.left = `${maxLeft}px`;
+        if (currentTop < 0) img.style.top = '0px';
+        if (currentTop > maxTop) img.style.top = `${maxTop}px`;
+      } else {
+        img.style.position = '';
+        img.style.left = '';
+        img.style.top = '';
+        img.classList.remove('positioned');
+      }
       
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
@@ -739,17 +891,18 @@ function useEditor(docId) {
         !e.target.closest('.resize-handle') &&
         !e.target.closest('.image-toolbar')) {
 
-        // Remove selection from all images
         const allImages = editorRef.current?.querySelectorAll('.resizable-image');
         allImages?.forEach(image => {
             image.classList.remove('selected');
+            if (image._handleUpdateListeners) {
+                image._handleUpdateListeners.forEach(cleanup => cleanup());
+                image._handleUpdateListeners = null;
+            }
         });
 
-        // Remove all resize handles
         const handles = editorRef.current?.querySelectorAll('.resize-handle');
         handles?.forEach(handle => handle.remove());
 
-        // Remove toolbar
         const toolbar = editorRef.current?.querySelector('.image-toolbar');
         if (toolbar) toolbar.remove();
     }
@@ -897,7 +1050,6 @@ function useEditor(docId) {
           next = next.nextSibling;
           toRemove.parentNode.removeChild(toRemove);
         }
-        // Unwrap empty or styleless spans
         if (!node.textContent || node.textContent === '\u200B' || !node.getAttribute('style')) {
           let toRemove = node;
           node = node.nextSibling;
@@ -1183,21 +1335,6 @@ function useEditor(docId) {
   useEffect(() => {
     if (editorRef.current && pages[currentPageIndex]?.content !== editorRef.current.innerHTML) {
       editorRef.current.innerHTML = pages[currentPageIndex]?.content || '';
-      
-      setTimeout(() => {
-        const codeBlocks = editorRef.current?.querySelectorAll('pre code');
-        if (codeBlocks) {
-          codeBlocks.forEach(codeBlock => {
-            const language = codeBlock.className.replace('language-', '');
-            if (language) {
-              const event = new CustomEvent('applySyntaxHighlighting', { 
-                detail: { language, codeBlock } 
-              });
-              editorRef.current.dispatchEvent(event);
-            }
-          });
-        }
-      }, 10);
     }
   }, [pages, currentPageIndex]);
 
