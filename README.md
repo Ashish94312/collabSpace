@@ -7,6 +7,10 @@
 
 > A real-time collaborative document editor built with React, Node.js, and WebSockets. CollabSpace allows multiple users to edit documents simultaneously with features like rich text editing, image handling, page management, and real-time synchronization.
 
+
+https://github.com/user-attachments/assets/143dfc1c-d577-48b7-8d87-6869bc2b9af9
+
+
 ## 🌟 Why CollabSpace?
 
 - **🚀 Real-time Collaboration** - Multiple users can edit documents simultaneously
