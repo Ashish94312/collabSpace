@@ -1,11 +1,15 @@
-# CollabSpace 📄
+# <img src="frontend/public/favicon.ico" alt="" width="28" height="28" /> CollabSpace
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
-[![Contributors Welcome](https://img.shields.io/badge/contributors-welcome-orange.svg)](https://github.com/yourusername/collabspace)
+[![Contributors Welcome](https://img.shields.io/badge/contributors-welcome-orange.svg)](CONTRIBUTING.md)
 
 > A real-time collaborative document editor built with React, Node.js, and WebSockets. CollabSpace allows multiple users to edit documents simultaneously with features like rich text editing, image handling, page management, and real-time synchronization.
+
+
+https://github.com/user-attachments/assets/143dfc1c-d577-48b7-8d87-6869bc2b9af9
+
 
 ## 🌟 Why CollabSpace?
 
@@ -66,7 +70,6 @@
 - **React 19** - Modern React with hooks
 - **React Router** - Client-side routing
 - **Tailwind CSS** - Utility-first CSS framework
-- **TipTap** - Rich text editor framework
 - **KaTeX** - LaTeX rendering
 - **WebSocket** - Real-time communication
 
@@ -97,58 +100,34 @@
 
 ### Installation
 
-1. **Fork and clone the repository**
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/collabspace.git
+   git clone https://github.com/YOUR_USERNAME/collabspace.git
    cd collabspace
    ```
 
-2. **Install backend dependencies**
+2. **Set up backend**
    ```bash
    cd backend
    npm install
-   ```
-
-3. **Install frontend dependencies**
-   ```bash
-   cd ../frontend
-   npm install
-   ```
-
-4. **Set up environment variables**
-   
-   Create a `.env` file in the backend directory:
-   ```env
-   DATABASE_URL="postgresql://username:password@localhost:5432/collabspace"
-   JWT_SECRET="your-secret-key"
-   PORT=3000
-   ```
-
-5. **Set up the database**
-   ```bash
-   cd backend
+   cp .env.example .env  # Edit with your database credentials
    npx prisma generate
    npx prisma db push
-   ```
-
-6. **Start the backend server**
-   ```bash
-   cd backend
    npm start
    ```
 
-7. **Start the frontend development server**
+3. **Set up frontend** (in a new terminal)
    ```bash
    cd frontend
+   npm install
    npm start
    ```
 
-### Optional: Elasticsearch Setup
-For search functionality, install and run Elasticsearch:
-```bash
-# Using Docker
-docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:7.15.0
-```
+4. **Access the application**
+   - Frontend: http://localhost:3002
+   - Backend API: http://localhost:3000
+
+For detailed setup instructions, troubleshooting, and known issues, see [SETUP.md](SETUP.md).
 
 ## 📁 Project Structure
 
@@ -263,70 +242,19 @@ clean-collabSpace/
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! **Every contribution matters** - whether it's fixing a typo, reporting a bug, or adding a major feature. We're building an open-source alternative to Google Docs, Notion, and other proprietary solutions, and we need your help!
+We welcome contributions from the community! **Every contribution matters** - whether it's fixing a typo, reporting a bug, or adding a major feature. We're building an open-source alternative to Google Docs, Notion, and other proprietary solutions.
+
+For detailed contribution guidelines, development workflow, and coding standards, please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Ways to Contribute
-- 🐛 **Bug Reports** - Found a bug? Open an issue! Even small bugs matter.
-- 🔧 **Fix Existing Bugs** - Found a bug in the code? Fix it and create a pull request! Help us improve quality.
-- ✨ **Feature Requests** - Have an idea? Let us know! We want to compete with the best.
-- 🔧 **Code Contributions** - Fix bugs or add features. Every line of code helps!
-- 📚 **Documentation** - Improve docs and examples. Help others get started.
-- 🧪 **Testing** - Help us test and improve quality. Find edge cases!
-- 💬 **Community Support** - Help others in discussions and issues.
-- 🌟 **Star & Share** - Star the repo and share with others who might benefit.
-
-### Development Workflow
-
-1. **Fork the repository**
-   ```bash
-   # Click the "Fork" button on GitHub
-   ```
-
-2. **Clone your fork**
-   ```bash
-   git clone https://github.com/yourusername/collabspace.git
-   cd collabspace
-   ```
-
-3. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-
-4. **Make your changes**
-   - Write clean, well-documented code
-   - Follow the existing code style
-   - Add tests for new features
-   - Update documentation as needed
-
-5. **Commit your changes**
-   ```bash
-   git commit -m "Add amazing feature"
-   ```
-
-6. **Push to your fork**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-
-7. **Create a Pull Request**
-   - Go to your fork on GitHub
-   - Click "New Pull Request"
-   - Fill out the PR template
-   - Wait for review and feedback
-
-### Code Style Guidelines
-- Use meaningful variable and function names
-- Add comments for complex logic
-- Follow the existing code formatting
-- Write tests for new functionality
-- Update documentation for API changes
-
-### Issue Guidelines
-- Use the issue templates
-- Provide clear reproduction steps
-- Include environment details
-- Be respectful and constructive
+- 🐛 **Bug Reports** - Found a bug? Open an issue!
+- 🔧 **Fix Existing Bugs** - Fix bugs and create pull requests
+- ✨ **Feature Requests** - Have an idea? Let us know!
+- 🔧 **Code Contributions** - Fix bugs or add features
+- 📚 **Documentation** - Improve docs and examples
+- 🧪 **Testing** - Help us test and improve quality
+- 💬 **Community Support** - Help others in discussions and issues
+- 🌟 **Star & Share** - Star the repo and share with others
 
 ## 📝 License
 
@@ -376,10 +304,10 @@ We're always working on new features! Here's what's coming:
 ## 📞 Community & Support
 
 ### Getting Help
-- 📖 **Documentation** - Check our [docs](https://github.com/yourusername/collabspace/wiki)
-- 🐛 **Bug Reports** - [Open an issue](https://github.com/yourusername/collabspace/issues)
-- 💬 **Discussions** - Join our [GitHub Discussions](https://github.com/yourusername/collabspace/discussions)
-- 💡 **Feature Requests** - [Request a feature](https://github.com/yourusername/collabspace/issues/new?template=feature_request.md)
+- 📖 **Documentation** - Check the README and project documentation
+- 🐛 **Bug Reports** - Open an issue in the repository
+- 💬 **Discussions** - Use GitHub Issues for questions and discussions
+- 💡 **Feature Requests** - Open an issue with the feature request
 
 ### Community Guidelines
 - Be respectful and inclusive
@@ -412,4 +340,28 @@ Made with ❤️ by the open source community
 
 **Every contribution matters - help us build the future of collaborative editing!** 🌟
 
+---
+
+## 🎃 Hacktoberfest 2025
+
+CollabSpace is participating in **Hacktoberfest 2025**! We welcome contributions from developers of all skill levels.
+
+### How to Contribute
+
+1. Check out our [open issues](https://github.com/Ashish94312/collabSpace/issues) labeled with `good first issue` or `hacktoberfest-accepted`
+2. Read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
+3. Fork the repository, make your changes, and submit a PR
+4. Tag your PR with `hacktoberfest` for tracking
+
+**Looking for ideas?** Try:
+- 🐛 Fixing bugs
+- 📝 Improving documentation
+- ✨ Adding new features
+- 🎨 Enhancing the UI/UX
+
+Every contribution counts toward building the future of open-source collaborative editing!
+
 </div>
+
+<p align="center">[⬆️ Back to top](#collabspace-)</p>
+

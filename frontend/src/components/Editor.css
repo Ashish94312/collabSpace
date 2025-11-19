@@ -92,6 +92,7 @@
 ================================== */
 .editor-body {
   display: flex;
+  align-items: flex-start;
   gap: 24px;
   padding: 32px 0;
   max-width: 1400px;
@@ -167,6 +168,7 @@
   max-width: 100%;
   overflow: auto; 
   padding: 20px 0;
+  min-width: 0; /* Allows flex item to shrink below content size */
 }
 
 /* ===============================
@@ -192,6 +194,8 @@
   /* height: ; */
   height: 1123px; /* Fixed typo: removed space */
   display: block !important; /* 🎓 LEARNING: Changed from flex to block for proper text flow */
+  box-sizing: border-box;
+  overflow-wrap: break-word;
 }
 
 /* Page size variations - use min-height instead of fixed height */
@@ -471,28 +475,38 @@
    Code Block Styling
 ================================== */
 .editor-page pre {
-  background-color: #1e1e1e;
-  border: 1px solid #3c3c3c;
+  background-color: #f8f9fa;
+  border: 1px solid #e1e4e8;
   border-radius: 8px;
   padding: 16px 20px;
   margin: 12px 0;
   overflow-x: auto;
+  overflow-y: visible;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
   font-size: 14px;
   line-height: 1.6;
   white-space: pre;
-  color: #d4d4d4;
+  color: #24292e;
   word-wrap: break-word;
-  max-width: 100%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
   tab-size: 2;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .editor-page pre code {
   white-space: pre;
   display: block;
   width: 100%;
+  min-height: 1em;
+  outline: none;
+  color: inherit;
+  background-color: transparent;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 
 .editor-page pre::before {
@@ -502,22 +516,25 @@
   right: 12px;
   font-size: 11px;
   font-weight: 600;
-  color: #858585;
+  color: #6a737d;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: #2d2d2d;
-  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 4px 8px;
   border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .editor-page code {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
   font-size: 14px;
-  background-color: #f1f3f4;
+  background-color: #f6f8fa;
   padding: 2px 6px;
   border-radius: 4px;
-  color: #d73a49;
+  color: #e83e8c;
   border: 1px solid #e1e4e8;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .editor-page pre code {
@@ -527,87 +544,40 @@
   border: none;
 }
 
-/* Syntax Highlighting */
-.editor-page .language-javascript .keyword { color: #569cd6; }
-.editor-page .language-javascript .string { color: #ce9178; }
-.editor-page .language-javascript .comment { color: #6a9955; }
-.editor-page .language-javascript .function { color: #dcdcaa; }
-.editor-page .language-javascript .number { color: #b5cea8; }
-.editor-page .language-javascript .operator { color: #d4d4d4; }
+/* Dark mode styles for code blocks */
+[data-theme="dark"] .editor-page pre {
+  background-color: #1e1e1e;
+  border: 1px solid #3c3c3c;
+  color: #d4d4d4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
 
-.editor-page .language-python .keyword { color: #569cd6; }
-.editor-page .language-python .string { color: #ce9178; }
-.editor-page .language-python .comment { color: #6a9955; }
-.editor-page .language-python .function { color: #dcdcaa; }
-.editor-page .language-python .number { color: #b5cea8; }
-.editor-page .language-python .decorator { color: #c586c0; }
+[data-theme="dark"] .editor-page pre::before {
+  color: #858585;
+  background: rgba(45, 45, 45, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
 
-.editor-page .language-html .tag { color: #569cd6; }
-.editor-page .language-html .attribute { color: #9cdcfe; }
-.editor-page .language-html .string { color: #ce9178; }
-.editor-page .language-html .comment { color: #6a9955; }
+[data-theme="dark"] .editor-page code {
+  background-color: #2d2d2d;
+  color: #ce9178;
+  border-color: #3c3c3c;
+}
 
-.editor-page .language-css .selector { color: #d7ba7d; }
-.editor-page .language-css .property { color: #9cdcfe; }
-.editor-page .language-css .value { color: #ce9178; }
-.editor-page .language-css .comment { color: #6a9955; }
-.editor-page .language-css .function { color: #dcdcaa; }
-
-.editor-page .language-react .keyword { color: #569cd6; }
-.editor-page .language-react .string { color: #ce9178; }
-.editor-page .language-react .comment { color: #6a9955; }
-.editor-page .language-react .function { color: #dcdcaa; }
-.editor-page .language-react .jsx-tag { color: #569cd6; }
-.editor-page .language-react .jsx-attribute { color: #9cdcfe; }
-
-.editor-page .language-sql .keyword { color: #569cd6; }
-.editor-page .language-sql .string { color: #ce9178; }
-.editor-page .language-sql .comment { color: #6a9955; }
-.editor-page .language-sql .function { color: #dcdcaa; }
-.editor-page .language-sql .number { color: #b5cea8; }
-.editor-page .language-sql .operator { color: #d4d4d4; }
-
-/* Additional language support */
-.editor-page .language-bash .keyword { color: #569cd6; }
-.editor-page .language-bash .function { color: #dcdcaa; }
-.editor-page .language-bash .comment { color: #6a9955; }
-.editor-page .language-bash .string { color: #ce9178; }
-.editor-page .language-bash .number { color: #b5cea8; }
-.editor-page .language-bash .variable { color: #9cdcfe; }
-.editor-page .language-bash .operator { color: #d4d4d4; }
-
-.editor-page .language-shell .keyword { color: #569cd6; }
-.editor-page .language-shell .function { color: #dcdcaa; }
-.editor-page .language-shell .comment { color: #6a9955; }
-.editor-page .language-shell .string { color: #ce9178; }
-.editor-page .language-shell .number { color: #b5cea8; }
-.editor-page .language-shell .variable { color: #9cdcfe; }
-.editor-page .language-shell .operator { color: #d4d4d4; }
-
-.editor-page .language-markdown .heading { color: #569cd6; font-weight: bold; }
-.editor-page .language-markdown .bold { color: #dcdcaa; font-weight: bold; }
-.editor-page .language-markdown .italic { color: #dcdcaa; font-style: italic; }
-.editor-page .language-markdown .code { color: #ce9178; background: rgba(255, 255, 255, 0.1); padding: 1px 3px; border-radius: 2px; }
-.editor-page .language-markdown .link { color: #4ec9b0; }
-.editor-page .language-markdown .list { color: #d4d4d4; }
-.editor-page .language-markdown .quote { color: #6a9955; font-style: italic; }
-.editor-page .language-markdown .codeblock { color: #569cd6; }
-.editor-page .language-markdown .separator { color: #858585; }
-
-.editor-page .language-json .keyword { color: #569cd6; }
-.editor-page .language-json .string { color: #ce9178; }
-.editor-page .language-json .number { color: #b5cea8; }
-.editor-page .language-json .operator { color: #d4d4d4; }
-
-.editor-page .language-xml .tag { color: #569cd6; }
-.editor-page .language-xml .attribute { color: #9cdcfe; }
-.editor-page .language-xml .string { color: #ce9178; }
-.editor-page .language-xml .comment { color: #6a9955; }
+[data-theme="dark"] .editor-page pre code {
+  color: #d4d4d4;
+}
 
 /* Code block hover effects */
 .editor-page pre:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-theme="dark"] .editor-page pre:hover {
   border-color: #4a4a4a;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 /* Line numbers (optional enhancement) */
@@ -643,14 +613,14 @@
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
+  box-sizing: border-box;
 }
 
 .editor-page img:hover {
   transform: scale(1.02);
 }
 
-/* 🎓 LEARNING: Better Image Spacing */
-/* Ensure images don't create excessive spacing */
+
 .editor-page img + img {
   margin-top: 4px; /* Reduced spacing between consecutive images */
 }
@@ -790,6 +760,11 @@
   cursor: move;
   user-select: none;
   transition: transform 0.1s ease;
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 8px 0;
+  box-sizing: border-box;
 }
 
 .editor-page .resizable-image.selected {
@@ -806,6 +781,24 @@
   opacity: 0.8;
   transform: scale(1.02);
   z-index: 1000;
+}
+
+/* Ensure images stay within page boundaries when positioned */
+.editor-page .resizable-image[style*="left"],
+.editor-page .resizable-image[style*="top"] {
+  max-width: calc(100% - 160px); /* Account for page padding */
+}
+
+/* Only allow positioning during drag or when explicitly positioned */
+.editor-page .resizable-image.positioned {
+  position: relative;
+}
+
+/* Reset positioning for non-positioned images to maintain flow */
+.editor-page .resizable-image:not(.positioned) {
+  position: static;
+  left: auto !important;
+  top: auto !important;
 }
 
 /* Resize Handles */
@@ -880,3 +873,264 @@
     transform: translateY(0);
   }
 }
+
+.columns-inline{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+}
+
+.columns-stepper{
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.columns-stepper button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.columns-stepper button:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.columns-stepper button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.columns-stepper button.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  font-weight: 600;
+}
+
+.columns-range{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.columns-range input[type="range"] {
+  width: 120px;
+  height: 4px;
+  border-radius: 2px;
+  background: #e2e8f0;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.columns-range input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.columns-range input[type="range"]::-webkit-slider-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+.columns-range input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.columns-range input[type="range"]::-moz-range-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+.columns-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+}
+
+/* === Multi-column MVP === */
+.editor-columns {
+  column-count: var(--cols, 1);
+  column-gap: var(--col-gap, 2rem);
+}
+
+/* Evitar que bloques grandes se partan entre columnas */
+.break-inside-avoid,
+.editor-page img,
+.editor-page table,
+.editor-page pre {
+  break-inside: avoid;
+}
+
+/* Responsive: en pantallas chicas, 1 columna */
+@media (max-width: 640px) {
+  .editor-columns {
+    column-count: 1 !important;
+  }
+}
+
+/* === Header / Footer bands (override final) === */
+.editor-canvas {
+  position: relative; /* Para que las bandas absolutas tomen este contenedor */
+}
+
+/* Bandas editables */
+.page-header-band,
+.page-footer-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 10px 18px !important; /* vence el reset anterior */
+  z-index: 2;
+  background: transparent;
+  color: #374151;
+  pointer-events: auto;
+  border: 0;
+}
+
+.page-header-band {
+  top: 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+.page-footer-band {
+  bottom: 0;
+  border-top: 1px dashed #e2e8f0;
+}
+
+/* Placeholder cuando están vacías */
+.page-header-band:empty::before,
+.page-footer-band:empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Ajuste de padding de la página para no tapar el texto */
+.editor-page {
+  /* Tu CSS pone padding: 60px 80px !important;
+     aquí lo sobreescribimos para sumar las bandas */
+  padding: calc(60px + var(--header-h, 0px)) 80px
+           calc(60px + var(--footer-h, 0px)) 80px !important;
+  position: relative; /* por seguridad */
+  z-index: 1;         /* el contenido queda debajo de las bandas */
+}
+
+/* El reset global que hace padding:0 !important en .editor-page * 
+   NO debe afectar a las bandas: forzamos su padding otra vez */
+.page-header-band *, .page-footer-band * {
+  padding: 0 !important;
+}
+
+.editor-page {
+  direction: ltr !important;
+  unicode-bidi: isolate !important; /* evita overrides heredados */
+  text-align: left;
+  writing-mode: horizontal-tb;
+}
+
+.editor-page * {
+  unicode-bidi: normal; /* quita posibles bidi-override de spans */
+  direction: ltr;
+}
+
+.editor-page { position: relative; box-sizing: border-box; }
+.editor-page { --header-h: 0px; --footer-h: 0px; }
+
+/* Franjas de header/footer con el MISMO ancho que la página */
+.page-header, .page-footer {
+  position: absolute;
+  left: 0; right: 0; width: 100%;
+  box-sizing: border-box;
+  padding: 8px 24px;
+  background: transparent;
+  text-align: left;
+}
+
+.page-header {
+  top: 0;
+  min-height: var(--header-h);
+  border-bottom: 1px dashed #d1d5db;
+}
+
+.page-footer {
+  bottom: 0;
+  min-height: var(--footer-h);
+  border-top: 1px dashed #d1d5db;
+}
+
+/* El cuerpo deja espacio reservado arriba/abajo */
+.page-body {
+  position: relative; /* Required for absolute positioning of resize handles */
+  min-height: calc(100% - var(--header-h) - var(--footer-h));
+  padding-top: var(--header-h);
+  padding-bottom: var(--footer-h);
+}
+
+/* Que nada fuerce RTL ni reinicie padding en header/footer */
+.page-header *, .page-footer * {
+  line-height: 1.2 !important;
+  margin: 0; padding: 0;
+  direction: ltr;
+  unicode-bidi: plaintext;
+}
+/* Evita que parezca un marco negro enorme */
+.editor-page pre {
+  background-color: #f8fafc;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 8px 0;
+  white-space: pre-wrap;      /* permite “wrap” dentro del código */
+  word-break: break-word;     /* por si hay líneas muy largas */
+  min-height: auto;           /* sin altura excesiva */
+}
+
+/* Un placeholder discreto si está vacío */
+.editor-page pre:empty::before {
+  content: 'Code';
+  color: #94a3b8;
+}
+
+/* Asegura que el cuerpo no muestre contorno raro al enfocar */
+.page-body:focus { outline: none; }
+

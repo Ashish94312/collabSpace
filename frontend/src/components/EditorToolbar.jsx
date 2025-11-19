@@ -1,9 +1,26 @@
 import React from 'react';
 import { getPageSizeOptions } from '../utils/pageSizes';
-// import './LatexRenderer';
 
-function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFormats = [], clearFormatting, pages = [], currentPageIndex = 0, pageSize = 'a4', onPageSizeChange, updateActiveFormats, handleImageUpload, insertImage, convertToInlineCode }) {
-  // NOTE: document.execCommand is deprecated and may not work in all browsers. Consider migrating to a modern rich text editor library.
+function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFormats = [], clearFormatting, pages = [], currentPageIndex = 0, pageSize = 'a4', onPageSizeChange, updateActiveFormats, handleImageUpload, insertImage, convertToInlineCode, headerEnabled, footerEnabled, onToggleHeader, onToggleFooter, columns = 1, onChangeColumns, exportToPDF, exportToDOC}) {
+  const [showExportMenu, setShowExportMenu] = React.useState(false);
+  const exportMenuRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target)) {
+        setShowExportMenu(false);
+      }
+    };
+
+    if (showExportMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showExportMenu]);
+
   const isActive = (cmd) => {
     const normalized = cmd.toLowerCase();
     return activeFormats.includes(normalized) || activeFormats.includes(`<${normalized}>`);
@@ -13,12 +30,25 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
   const pageSizeOptions = getPageSizeOptions();
 
-  // Helper to call format and then update active formats if provided
   const handleFormat = (command, value = null) => {
     format(command, value);
     if (typeof updateActiveFormats === 'function') {
       setTimeout(updateActiveFormats, 0);
     }
+  };
+ 
+ const setCols = (n) => {
+   const safe = Math.max(1, Math.min(6, n));
+   if (typeof onChangeColumns === 'function') onChangeColumns(safe);
+ };
+
+  const handleExport = (format) => {
+    if (format === 'pdf' && exportToPDF) {
+      exportToPDF();
+    } else if (format === 'doc' && exportToDOC) {
+      exportToDOC();
+    }
+    setShowExportMenu(false);
   };
 
   return (
@@ -99,23 +129,6 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
 
         <div className="toolbar-divider"></div>
 
-        {/* Advanced Text Formatting Group */}
-        {/* <div className="toolbar-group">
-          <button
-            onMouseDown={(e) => { e.preventDefault(); handleFormat('subscript'); }}
-            className={buttonClass('subscript')}
-            title="Subscript"
-          ><sub>A₂</sub></button>
-
-          <button
-            onMouseDown={(e) => { e.preventDefault(); handleFormat('superscript'); }}
-            className={buttonClass('superscript')}
-            title="Superscript"
-          ><sup>A²</sup></button>
-        </div> */}
-
-        <div className="toolbar-divider"></div>
-
         {/* Headings Group */}
         <div className="toolbar-group">
           {['h1', 'h2', 'h3'].map(h => (
@@ -169,20 +182,6 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             onClick={() => document.getElementById('image-upload').click()}
           >
             🖼️
-          </button>
-          
-          <button
-            type="button"
-            className="editor-button"
-            title="Insert Image from URL"
-            onClick={() => {
-              const url = prompt('Enter image URL:');
-              if (url && insertImage) {
-                insertImage(url);
-              }
-            }}
-          >
-            🔗
           </button>
         </div>
 
@@ -267,6 +266,7 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             title="Insert Code Block"
           >
             <option value="" disabled>Code Block</option>
+            <option value="plain">📝 Plain Text</option>
             <option value="javascript">🖥️ JavaScript</option>
             <option value="python">🐍 Python</option>
             <option value="html">🌐 HTML</option>
@@ -326,6 +326,78 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
           >➕</button>
         </div>
 
+        <div className="toolbar-divider"></div>
+
+        {/* Export Group */}
+        <div className="toolbar-group" ref={exportMenuRef} style={{ position: 'relative' }}>
+          <button
+            onMouseDown={(e) => { 
+              e.preventDefault(); 
+              setShowExportMenu(!showExportMenu);
+            }}
+            title="Export Document"
+            className="editor-button"
+          >📤</button>
+          
+          {showExportMenu && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              marginTop: '4px',
+              backgroundColor: 'white',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              zIndex: 1000,
+              minWidth: '120px',
+              overflow: 'hidden'
+            }}>
+              <button
+                onMouseDown={(e) => { e.preventDefault(); handleExport('pdf'); }}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  textAlign: 'left',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#f8fafc'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+              >
+                <span>📄</span>
+                <span>PDF</span>
+              </button>
+              <button
+                onMouseDown={(e) => { e.preventDefault(); handleExport('doc'); }}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  textAlign: 'left',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  borderTop: '1px solid #e2e8f0'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#f8fafc'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+              >
+                <span>📝</span>
+                <span>DOC</span>
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Page Counter */}
         <div className="page-counter" title="Page information">
           <span className="page-counter-text">
@@ -352,7 +424,57 @@ function EditorToolbar({ format, undo, redo, addPage, insertCodeBlock, activeFor
             ))}
           </select>
         </div>
-        
+
+        <div className="toolbar-divider"></div>
+        {/* Header/Footer toggles */}
+        <div className="toolbar-group">
+          <button
+            onMouseDown={(e)=>{e.preventDefault(); onToggleHeader?.();}}
+            className="editor-button"
+            title={headerEnabled ? "Disable Header" : "Enable Header"}
+          >
+            H
+          </button>
+          <button
+            onMouseDown={(e)=>{e.preventDefault(); onToggleFooter?.();}}
+            className="editor-button"
+            title={footerEnabled ? "Disable Footer" : "Enable Footer"}
+          >
+            F
+          </button>
+        </div>
+        {/* Columns Group (1–6) */}
+        <div className="toolbar-group columns-inline">
+          <div className="columns-stepper">
+            <button 
+              className={columns === 1 ? 'active' : ''}
+              onMouseDown={(e)=>{e.preventDefault(); onChangeColumns(1)}}
+              title="1 Column"
+            >1×</button>
+            <button 
+              className={columns === 2 ? 'active' : ''}
+              onMouseDown={(e)=>{e.preventDefault(); onChangeColumns(2)}}
+              title="2 Columns"
+            >2×</button>
+            <button 
+              className={columns === 3 ? 'active' : ''}
+              onMouseDown={(e)=>{e.preventDefault(); onChangeColumns(3)}}
+              title="3 Columns"
+            >3×</button>
+          </div>
+
+          <label className="columns-range" title="Number of columns">
+            <span>Cols</span>
+            <input
+              type="range"
+              min="1"
+              max="6"
+              value={columns}
+              onChange={(e)=>onChangeColumns(Number(e.target.value))}
+            />
+            <span className="columns-value">{columns}</span>
+          </label>
+        </div>
       </div>
     </div>
   );

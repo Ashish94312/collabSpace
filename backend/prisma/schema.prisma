@@ -4,6 +4,13 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+enum Role {
+  OWNER     // Typically implicit, but good to define
+  EDITOR    // Can edit and comment
+  COMMENTER // Can view and comment
+  VIEWER    // Can only view
+}
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -64,6 +71,7 @@ model DocumentShare {
   documentId String
   userId     String
   accepted   Boolean  @default(false)
+  role       Role     @default(EDITOR)
 
   @@unique([documentId, userId])
 }
