@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import './Dashboard.css';
+import './Dashboard.css'; // Import custom CSS
+import DocumentUploader from "../components/DocumentUploader";
+
+// import '../components/DocSearchBar';
 import DocumentSearchBar from '../components/DocSearchBar'; 
 import { switchPage } from '../components/Editor';
 import { isTokenExpired, getTimeUntilExpiration } from '../utils/tokenUtils';
@@ -157,6 +160,9 @@ export default function Dashboard() {
         <div className="dashboard-actions">
           <button className="create-button" onClick={createDocument}>+ New Document</button>
         </div>
+        <section className="mt-8">
+        <DocumentUploader />
+        </section>
 
         {filteredDocuments.length > 0 ? (
           <ul className="doc-list">

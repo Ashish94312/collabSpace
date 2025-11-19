@@ -699,6 +699,54 @@ app.get('/api/test-upload', (req, res) => {
   });
 });
 
+// ---------------- Document Upload Setup ----------------
+const multerDocs = require("multer");
+
+
+const documentStorage = multerDocs.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadPath = path.join(__dirname, "uploads", "documents");
+    if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const uploadDocument = multerDocs({
+  storage: documentStorage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+    ];
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(new Error("Only PDF, DOC, DOCX, and TXT files are allowed"));
+    }
+    cb(null, true);
+  },
+});
+
+// Document Upload Route
+app.post("/api/upload-document", uploadDocument.single("document"), (req, res) => {
+  try {
+    const fileUrl = `/uploads/documents/${req.file.filename}`;
+    res.json({ success: true, fileUrl, fileName: req.file.originalname });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Upload failed", error });
+  }
+});
+
+
+// app.listen(PORT, () => {
+//   console.log(`🚀 Server running on http://localhost:${PORT}`);
+// });
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`🔗 WebSocket server running on ws://localhost:3001`);
