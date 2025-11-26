@@ -340,28 +340,4 @@ Made with ❤️ by the open source community
 
 **Every contribution matters - help us build the future of collaborative editing!** 🌟
 
----
-
-## 🎃 Hacktoberfest 2025
-
-CollabSpace is participating in **Hacktoberfest 2025**! We welcome contributions from developers of all skill levels.
-
-### How to Contribute
-
-1. Check out our [open issues](https://github.com/Ashish94312/collabSpace/issues) labeled with `good first issue` or `hacktoberfest-accepted`
-2. Read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
-3. Fork the repository, make your changes, and submit a PR
-4. Tag your PR with `hacktoberfest` for tracking
-
-**Looking for ideas?** Try:
-- 🐛 Fixing bugs
-- 📝 Improving documentation
-- ✨ Adding new features
-- 🎨 Enhancing the UI/UX
-
-Every contribution counts toward building the future of open-source collaborative editing!
-
-</div>
-
-<p align="center">[⬆️ Back to top](#collabspace-)</p>
 
